@@ -20,7 +20,8 @@ const config: Config = {
       'lightGray': '#EEE',
       'lightGrayHover': '#DFDEDE',
       'white': '#FFF',
-      'black': '#000'
+      'black': '#000',
+      'line': '#636363'
     }
   },
   plugins: [],
