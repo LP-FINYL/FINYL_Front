@@ -1,4 +1,5 @@
 import './globals.css'
+import {Providers} from "@/app/providers";
 
 export const metadata = {
   title: 'Next.js',
@@ -12,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <Providers>
+        {children}
+      </Providers>
     </html>
   )
 }
