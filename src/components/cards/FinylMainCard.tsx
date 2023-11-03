@@ -27,8 +27,8 @@ const FinylMainCard: NextPage<props> = ({title, image, description, tags, info, 
 
     return <div className={initStyle}>
         <div className={'flex flex-col w-full h-full'}>
-            <div className={'w-full h-[456px]'}>
-                <div className={'absolute w-full h-[456px]'} >
+            <div className={'w-full h-[393px]'}>
+                <div className={'absolute w-full h-[393px]'} >
                     <Image
                         src={'https://lh3.googleusercontent.com/p/AF1QipNziqUN_0xcqb5iKZw1wXZs9TbaJM0eaXbaA_3c=s680-w680-h510'}
                         alt={'SMC'}

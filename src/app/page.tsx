@@ -7,7 +7,7 @@ const Home = () => {
     const [selectId, setSelectId] = useState<string | undefined>(undefined)
 
     useEffect(() => {
-        console.log(selectId)
+        console.log('test')
     }, [selectId])
 
     return (
