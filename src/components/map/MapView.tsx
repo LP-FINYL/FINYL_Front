@@ -1,6 +1,7 @@
 "use client"
 import {useEffect, useState} from "react";
 import {NextPage} from "next";
+import {noAuthFetch} from "@/api/api";
 
 declare global {
     interface Window {
@@ -18,16 +19,26 @@ interface props {
 }
 
 const MapView:NextPage<props> = ({setSelectedId}) => {
+    const [result, setResult] = useState<Array<any>>([])
     const [markers, setMarkers] = useState<Array<MarkerGroup>>([])
 
+    const getLocation = async () => {
+        const location = await noAuthFetch('location', 'GET')
+        setResult(location)
+    }
+
     useEffect(() => {
-        console.log('test')
+        getLocation()
+    }, []);
+
+    useEffect(() => {
         const kakaoMapScript = document.createElement('script')
         kakaoMapScript.async = false
         kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=040ca9bab6805a5dc1355dd4141d7490&autoload=false`
         document.head.appendChild(kakaoMapScript)
 
         const onLoadKakaoAPI = () => {
+            console.log(markers.length)
             window.kakao.maps.load(() => {
                 var container = document.getElementById('map')
                 var options = {
@@ -38,7 +49,15 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
                 var map = new window.kakao.maps.Map(container, options)
 
                 if(!markers.length){
-                    addMarker(new window.kakao.maps.LatLng(37.556142, 126.972371))
+                    console.log(result)
+                    const marker:Array<MarkerGroup> = result.map(v => {
+                        return {
+                            marker: addMarker(new window.kakao.maps.LatLng(v.latitude, v.longitude)),
+                            id: v.id
+                        }
+                    })
+
+                    setMarkers([...markers, ...marker])
                 }
 
                 function addMarker(position: any) {
@@ -49,10 +68,10 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
                     });
 
                     // 생성된 마커를 배열에 추가합니다
-                    setMarkers([...markers, {id: '1', marker}])
+                    return marker
                 }
 
-                if(markers.length){
+                if(markers?.length){
                     markers.map((marker) => {
                         marker.marker.setMap(map)
 
@@ -65,7 +84,7 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
         }
 
         kakaoMapScript.addEventListener('load', onLoadKakaoAPI)
-    }, [markers.length])
+    }, [result.length, markers.length])
 
     return (
         <div id="map" style={{ width: "100%", height: "100%" }}></div>
