@@ -1,4 +1,4 @@
-const FINYL_API = 'http://finyl-backend/api/v1'
+const FINYL_API = 'http://34.110.146.181/api/v1'
 
 type noAuthFetchType<T> = (api: string, method: 'GET' | 'POST') => Promise<T>
 
