@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import {Button, ButtonGroup} from "@nextui-org/react";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
+import {adminNoAuthFetch} from "@/api/api";
 
 interface OTType {
     day: string
@@ -24,27 +25,34 @@ interface cardType {
     address?: string
     tags?: string
     info?: string
-    operatorTime?: Array<OTType>
+    operatorTime?: string
 }
-
-const dummyData: Array<cardType> = [{
-    id: '123123',
-    title: '방레코드',
-    address: '서울 마포구 토정로 16길 20 1층 제2호',
-    tags: '중고 바이닐',
-    info: '클래식 락 재즈 영화음악 중심의 중고 바이닐 및 CD 판매점',
-    operatorTime: [{day: "월 - 금", time: "10:00 - 15:30"}, {day: "토", time: "13:00 - 17:30"}, {day: "일요일 정기휴무"}]
-}]
 
 const Home = () => {
     const router = useRouter()
+    const [storeList, setStoreList] = useState<Array<cardType>>([])
 
     useEffect(() => {
-
+        getStoreEntireInfo()
     }, [])
+
+    const getStoreEntireInfo = async () => {
+        const result = await adminNoAuthFetch('adminStoreEntireInfo', 'GET')
+
+        setStoreList([...result])
+    }
+
+    const getStoreDelete = async (id: string) => {
+        await adminNoAuthFetch('adminDelete', 'POST', {
+            id: id
+        }).then(() => {
+            getStoreEntireInfo()
+        })
+    }
 
     const operatorTimeConvert = (ot?: Array<OTType>) => {
         let otString: string = '-'
+
         if(ot && ot.length){
             otString = `${ot[0].day} ${ot[0].time ? `: ${ot[0].time}` : ''}`
         }
@@ -72,7 +80,7 @@ const Home = () => {
                     <TableColumn>운영시간</TableColumn>
                     <TableColumn> </TableColumn>
                 </TableHeader>
-                <TableBody items={dummyData}>
+                <TableBody items={storeList}>
                     {
                         (item) => {
                             return <TableRow key={item.id}>
@@ -80,19 +88,27 @@ const Home = () => {
                                 <TableCell>{item.address}</TableCell>
                                 <TableCell>{item.tags}</TableCell>
                                 <TableCell>{item.info}</TableCell>
-                                <TableCell>{operatorTimeConvert(item.operatorTime)}</TableCell>
-                                <TableCell><div className="relative flex items-center gap-2">
-                                    <Tooltip content="수정">
-                                        <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
-                                        <EditIcon />
-                                        </span>
-                                    </Tooltip>
-                                    <Tooltip color="danger" content="삭제">
-                                        <span className="text-lg text-danger cursor-pointer active:opacity-50">
-                                        <DeleteIcon />
-                                        </span>
-                                    </Tooltip>
-                                </div></TableCell>
+                                <TableCell>
+                                    {
+                                        item.operatorTime ? operatorTimeConvert(JSON.parse(item.operatorTime)) : "-"
+                                    }
+                                </TableCell>
+                                <TableCell>
+                                    <div className="relative flex items-center gap-2">
+                                        <Button isIconOnly>
+                                            <EditIcon />
+                                        </Button>
+                                        <Button
+                                            color="danger"
+                                            isIconOnly
+                                            onClick={() => {
+                                                getStoreDelete(item.id)
+                                            }}
+                                        >
+                                            <DeleteIcon />
+                                        </Button>
+                                    </div>
+                                </TableCell>
                             </TableRow>
                         }
                     }
