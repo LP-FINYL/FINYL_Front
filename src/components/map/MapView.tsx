@@ -38,7 +38,6 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
         document.head.appendChild(kakaoMapScript)
 
         const onLoadKakaoAPI = () => {
-            console.log(markers.length)
             window.kakao.maps.load(() => {
                 var container = document.getElementById('map')
                 var options = {
@@ -49,7 +48,6 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
                 var map = new window.kakao.maps.Map(container, options)
 
                 if(!markers.length){
-                    console.log(result)
                     const marker:Array<MarkerGroup> = result.map(v => {
                         return {
                             marker: addMarker(new window.kakao.maps.LatLng(v.latitude, v.longitude)),

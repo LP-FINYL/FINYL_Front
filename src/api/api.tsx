@@ -10,6 +10,14 @@ const noAuthFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
     return result
 }
 
+const adminNoAuthFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
+    const result = await fetch(`${FINYL_API}/admin/${api}`, {
+        method: method, body
+    }).then(res => res.json()).then(data => data)
+
+    return result
+}
+
 export {
     noAuthFetch
 }

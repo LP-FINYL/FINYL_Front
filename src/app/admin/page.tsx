@@ -1,5 +1,6 @@
 "use client"
 import {useEffect, useState} from "react";
+import { useRouter } from 'next/navigation'
 import {
     Table,
     TableHeader,
@@ -36,10 +37,20 @@ const dummyData: Array<cardType> = [{
 }]
 
 const Home = () => {
+    const router = useRouter()
 
     useEffect(() => {
 
     }, [])
+
+    const operatorTimeConvert = (ot?: Array<OTType>) => {
+        let otString: string = '-'
+        if(ot && ot.length){
+            otString = `${ot[0].day} ${ot[0].time ? `: ${ot[0].time}` : ''}`
+        }
+
+        return otString
+    }
 
     return (
       <div className="w-full flex flex-col items-center justify-center">
@@ -48,7 +59,7 @@ const Home = () => {
                 <p className={'font-inter font-bold text-2xl'}>
                     STORE INFO
                 </p>
-                <Button color="primary">
+                <Button color="primary" onClick={() => router.push('/admin/create')}>
                     생성
                 </Button>
             </div>
@@ -69,7 +80,7 @@ const Home = () => {
                                 <TableCell>{item.address}</TableCell>
                                 <TableCell>{item.tags}</TableCell>
                                 <TableCell>{item.info}</TableCell>
-                                <TableCell>11:30~3:30</TableCell>
+                                <TableCell>{operatorTimeConvert(item.operatorTime)}</TableCell>
                                 <TableCell><div className="relative flex items-center gap-2">
                                     <Tooltip content="수정">
                                         <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
