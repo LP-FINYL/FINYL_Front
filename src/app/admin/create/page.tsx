@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import DaumPost from "@/components/searchAddress/DaumPost";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
+import {adminNoAuthFetch} from "@/api/api";
 
 interface OTType {
     day: string
@@ -25,6 +26,8 @@ interface cardType {
     title: string
     image?: string
     address?: string
+    site?: string
+    instaUrl?: string
     tags?: string
     info?: string
     latitude?: number
@@ -44,6 +47,20 @@ const Home = () => {
             ...insertData,
             [key]: changeData
         })
+    }
+
+    const postAdminCreate = async () => {
+        console.log('data', {
+            ...insertData,
+            operatorTime: JSON.stringify(operatorTime)
+        })
+
+        const result = await adminNoAuthFetch('adminCreate', "POST", {
+            ...insertData,
+            operatorTime: JSON.stringify(operatorTime)
+        })
+
+        console.log('result', result)
     }
 
     const setAddress = (address: string, lat: number, lon: number) => {
@@ -98,9 +115,29 @@ const Home = () => {
                 label={'태그'}
                 labelPlacement={'outside'}
                 placeholder={'태그를 입력해주세요.'}
-                value={insertData.title}
+                value={insertData.tags}
                 onChange={(v) => {
                     setInsertDataKey('tags', v.target.value)
+                }}
+            />
+            <Spacer y={4} />
+            <Input
+                label={'사이트'}
+                labelPlacement={'outside'}
+                placeholder={'사이트를 입력해주세요.'}
+                value={insertData.site}
+                onChange={(v) => {
+                    setInsertDataKey('site', v.target.value)
+                }}
+            />
+            <Spacer y={4} />
+            <Input
+                label={'인스타'}
+                labelPlacement={'outside'}
+                placeholder={'인스타를 입력해주세요.'}
+                value={insertData.instaUrl}
+                onChange={(v) => {
+                    setInsertDataKey('instaUrl', v.target.value)
                 }}
             />
             <Spacer y={4} />
@@ -108,7 +145,7 @@ const Home = () => {
                 label={'매장 정보'}
                 labelPlacement={'outside'}
                 placeholder={'매장 정보를 입력해주세요.'}
-                value={insertData.title}
+                value={insertData.info}
                 onChange={(v) => {
                     setInsertDataKey('info', v.target.value)
                 }}
@@ -181,9 +218,7 @@ const Home = () => {
             <Button
                 className={'w-full'}
                 color={'primary'}
-                onClick={() => {
-
-                }}
+                onClick={() => postAdminCreate()}
             >
                 등록하기
             </Button>
