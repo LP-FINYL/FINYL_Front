@@ -95,7 +95,12 @@ const Home = () => {
                                 </TableCell>
                                 <TableCell>
                                     <div className="relative flex items-center gap-2">
-                                        <Button isIconOnly>
+                                        <Button
+                                            isIconOnly
+                                            onClick={() => {
+                                                router.push(`/admin/update/${item.id}`)
+                                            }}
+                                        >
                                             <EditIcon />
                                         </Button>
                                         <Button

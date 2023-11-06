@@ -15,6 +15,7 @@ import {
 import DaumPost from "@/components/searchAddress/DaumPost";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
 import {adminNoAuthFetch} from "@/api/api";
+import {useRouter} from "next/navigation"
 
 interface OTType {
     day: string
@@ -28,6 +29,7 @@ interface cardType {
     address?: string
     site?: string
     instaUrl?: string
+    phone?: string
     tags?: string
     info?: string
     latitude?: number
@@ -36,6 +38,7 @@ interface cardType {
 }
 
 const Home = () => {
+    const router = useRouter()
     const [insertData, setInsertData] = useState<cardType>({
         title: '',
     })
@@ -50,17 +53,13 @@ const Home = () => {
     }
 
     const postAdminCreate = async () => {
-        console.log('data', {
-            ...insertData,
-            operatorTime: JSON.stringify(operatorTime)
-        })
-
         const result = await adminNoAuthFetch('adminCreate', "POST", {
             ...insertData,
             operatorTime: JSON.stringify(operatorTime)
         })
 
         console.log('result', result)
+        router.back()
     }
 
     const setAddress = (address: string, lat: number, lon: number) => {
@@ -138,6 +137,21 @@ const Home = () => {
                 value={insertData.instaUrl}
                 onChange={(v) => {
                     setInsertDataKey('instaUrl', v.target.value)
+                }}
+            />
+            <Spacer y={4} />
+            <Input
+                label={'전화번호'}
+                labelPlacement={'outside'}
+                placeholder={'전화번호를 입력해주세요.'}
+                value={insertData.phone}
+                startContent={
+                    <div className="pointer-events-none flex items-center">
+                        <span className="text-default-400 text-small">+82)</span>
+                    </div>
+                }
+                onChange={(v) => {
+                    setInsertDataKey('phone', v.target.value)
                 }}
             />
             <Spacer y={4} />

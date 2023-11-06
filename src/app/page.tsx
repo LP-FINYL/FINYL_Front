@@ -6,10 +6,6 @@ import MapView from "@/components/map/MapView";
 const Home = () => {
     const [selectId, setSelectId] = useState<string | undefined>(undefined)
 
-    useEffect(() => {
-        console.log('selectId', selectId)
-    }, [selectId])
-
     return (
       <div className="w-full flex flex-col items-center justify-center">
         <div className="w-full h-screen">
