@@ -65,7 +65,7 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
             <div className={'w-full h-[393px]'}>
                 <div className={'absolute w-full h-[393px]'} >
                     <Image
-                        src={'https://lh3.googleusercontent.com/p/AF1QipNziqUN_0xcqb5iKZw1wXZs9TbaJM0eaXbaA_3c=s680-w680-h510'}
+                        src={image ?? 'https://lh3.googleusercontent.com/p/AF1QipNziqUN_0xcqb5iKZw1wXZs9TbaJM0eaXbaA_3c=s680-w680-h510'}
                         alt={'SMC'}
                         fill
                     />
@@ -88,6 +88,9 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                         variant={'solid'}
                         leftIcon={<CopyIcon />}
                         size={'sm'}
+                        onClick={() => {
+
+                        }}
                     >
                         <p className={'font-inter text-white text-sm font-semibold leading-tight'}>주소 복사</p>
                     </Button>
@@ -97,6 +100,9 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                         variant={'solid'}
                         leftIcon={<CopyIcon />}
                         size={'sm'}
+                        onClick={() => {
+
+                        }}
                     >
                         <p className={'font-inter text-white text-sm font-semibold leading-tight'}>전화번호 복사</p>
                     </Button>
