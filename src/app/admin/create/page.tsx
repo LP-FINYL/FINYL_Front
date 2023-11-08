@@ -1,5 +1,5 @@
 "use client"
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {
     Button,
     Input,
@@ -14,8 +14,9 @@ import {
 } from "@nextui-org/react";
 import DaumPost from "@/components/searchAddress/DaumPost";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
-import {adminNoAuthFetch} from "@/api/api";
+import {adminNoAuthFetch, formDataFetch} from "@/api/api";
 import {useRouter} from "next/navigation"
+import Image from "next/image";
 
 interface OTType {
     day: string
@@ -38,6 +39,7 @@ interface cardType {
 }
 
 const Home = () => {
+    const fileRef = useRef<HTMLInputElement>(null);
     const router = useRouter()
     const [insertData, setInsertData] = useState<cardType>({
         title: '',
@@ -80,6 +82,28 @@ const Home = () => {
         return otString
     }
 
+    const postImageUpload = async (formData: FormData) => {
+        const result = await formDataFetch(
+            'admin/imageUpload',
+            "POST",
+            formData
+        )
+
+        console.log('result', result)
+        router.back()
+    }
+
+    const handleClick = () => {
+        fileRef?.current?.click()
+    }
+
+    const handleOnchange = (file: File) => {
+        const formData = new FormData()
+        formData.append('file', file)
+
+        postImageUpload(formData)
+    }
+
     return (
       <div className="w-full flex flex-col items-center justify-center">
         <div className="w-full h-screen p-6">
@@ -108,6 +132,40 @@ const Home = () => {
                     value={insertData.address}
                 />
                 <DaumPost setAddress={setAddress} />
+            </div>
+            <Spacer y={4} />
+            <div className={'flex flex-col'}>
+                <div className={'flex mb-4 w-full h-auto overflow-x-auto'}>
+                    <div className={'flex gap-2'}>
+                        <div className={'h-24 w-24 rounded-small'}>
+                            <div className={'absolute w-24 h-24 rounded-small'} >
+                                {
+                                    insertData.image && <Image
+                                        src={insertData.image}
+                                        alt={insertData.image}
+                                        fill
+                                    />
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <Button
+                    className={'w-full'}
+                    onClick={handleClick}
+                >
+                    이미지 추가
+                </Button>
+                <Input
+                    ref={fileRef}
+                    type={'file'}
+                    className={'hidden'}
+                    onChange={(e) => {
+                        if(e.target?.files?.length) {
+                            handleOnchange(e.target.files[0])
+                        }
+                    }}
+                />
             </div>
             <Spacer y={4} />
             <Input
