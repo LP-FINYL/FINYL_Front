@@ -2,23 +2,12 @@
 import {useEffect, useState} from "react";
 import {NextPage} from "next";
 import Image from "next/image";
-import {ArrowBackIcon, CopyIcon, ExternalLinkIcon} from '@chakra-ui/icons'
-import {Button, Skeleton, SkeletonText} from '@chakra-ui/react'
+import {ArrowBackIcon, ExternalLinkIcon, Icon} from '@chakra-ui/icons'
+import {IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, SkeletonText} from '@chakra-ui/react'
 import {noAuthFetch} from "@/api/api";
-
-interface OTType {
-    day: string
-    time?: string
-}
-
-interface cardType {
-    title: string
-    image?: string
-    address?: string
-    tags?: string
-    info?: string
-    operatorTime?: Array<OTType>
-}
+import {CopyModal} from "@/components/modal/CopyModal";
+import {BsGlobe2, BsInstagram} from 'react-icons/bs'
+import {useRouter} from "next/navigation";
 
 interface props {
     selectedId?: string
@@ -28,10 +17,20 @@ interface props {
 const initStyle: string = 'absolute z-10 left-14 bottom-0 h-[800px] w-[393px] bg-white'
 
 const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
+    const router = useRouter()
     const [loading, setLoading] = useState<boolean>(true)
-    const [{title, image, address, tags, info, operatorTime}, setCardData] = useState<cardType>({
-        title: ''
-    })
+    const [
+        {
+            title,
+            image,
+            address,
+            tags,
+            phone,
+            site,
+            instaUrl,
+            info,
+            operatorTime
+        }, setCardData] = useState<storeInfoType>({ title: '' })
 
     useEffect(() => {
         if(selectedId){
@@ -49,10 +48,49 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
 
         setCardData({
             ...result,
-            operatorTime: JSON.parse(result.operatorTime)
+            operatorTime: JSON.parse(result.operatorTime),
+            phone: result.phone ? `0${result.phone}` : '-'
         })
 
         setLoading(false)
+    }
+
+    const goToUrl = (url: string) => {
+        window.open(url)
+    }
+
+    const ShareMenu = () => {
+        if(site || instaUrl) {
+            return (
+                <Menu>
+                    <MenuButton
+                        boxSize={6}
+                        as={IconButton}
+                        aria-label='Options'
+                        icon={<ExternalLinkIcon boxSize={6} />}
+                    />
+                    <MenuList>
+                        {
+                            site && <div onClick={() => goToUrl(site)}>
+                                <MenuItem icon={<Icon boxSize={4} as={BsGlobe2} />}>
+                                    웹사이트로 이동
+                                </MenuItem>
+                            </div>
+                        }
+                        {
+                            instaUrl &&
+                            <div onClick={() => goToUrl(instaUrl)}>
+                                <MenuItem icon={<Icon boxSize={4} as={BsInstagram} onClick={() => goToUrl(instaUrl)}/>}>
+                                    인스타그램으로 이동
+                                </MenuItem>
+                            </div>
+                        }
+                    </MenuList>
+                </Menu>
+            )
+        }else{
+            <div></div>
+        }
     }
 
     return <div className={`${initStyle} ${!selectedId ? 'hidden' : ''}`}>
@@ -61,7 +99,7 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                 <ArrowBackIcon className={'cursor-pointer'} boxSize={6} onClick={() => {
                     setSelectedId(undefined)
                 }}/>
-                <ExternalLinkIcon boxSize={6} />
+                <ShareMenu />
             </div>
             <div className={'w-full h-[393px]'}>
                 <div className={'absolute w-full h-[393px]'} >
@@ -85,30 +123,8 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                 <p className={"font-inter text-slate-600 text-sm font-normal my-[18px]"}>{address ?? ''}</p>
                 </SkeletonText>
                 <div className={'flex'}>
-                    <Button
-                        className={'bg-slate-400 mr-[9px]'}
-                        colorScheme={'pink'}
-                        variant={'solid'}
-                        leftIcon={<CopyIcon />}
-                        size={'sm'}
-                        onClick={() => {
-
-                        }}
-                    >
-                        <p className={'font-inter text-white text-sm font-semibold leading-tight'}>주소 복사</p>
-                    </Button>
-                    <Button
-                        className={'bg-slate-400'}
-                        colorScheme={'pink'}
-                        variant={'solid'}
-                        leftIcon={<CopyIcon />}
-                        size={'sm'}
-                        onClick={() => {
-
-                        }}
-                    >
-                        <p className={'font-inter text-white text-sm font-semibold leading-tight'}>전화번호 복사</p>
-                    </Button>
+                    <CopyModal text={'주소 복사'} copyValue={address ?? ''}/>
+                    <CopyModal text={'전화번호 복사'} copyValue={phone ?? ''}/>
                 </div>
                 <div className={'border-t-[1px] my-4 border-t-line'}/>
                 <div className={'flex justify-between'}>

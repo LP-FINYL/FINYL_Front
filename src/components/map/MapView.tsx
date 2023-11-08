@@ -3,12 +3,6 @@ import {useEffect, useState} from "react";
 import {NextPage} from "next";
 import {noAuthFetch} from "@/api/api";
 
-declare global {
-    interface Window {
-        kakao: any;
-    }
-}
-
 interface MarkerGroup {
     id: string
     marker: any
@@ -41,7 +35,7 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
             window.kakao.maps.load(() => {
                 var container = document.getElementById('map')
                 var options = {
-                    center: new window.kakao.maps.LatLng(37.556142, 126.972371),
+                    center: new window.kakao.maps.LatLng(37.557938025275, 126.922059899484),
                     level: 3,
                 }
 
