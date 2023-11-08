@@ -101,8 +101,7 @@ const Home: NextPage<props> = ({params}) => {
             formData
         )
 
-        console.log('result', result)
-        router.back()
+        setInsertDataKey('image', result.publicUrl)
     }
 
     const handleClick = () => {

@@ -73,15 +73,6 @@ const Home = () => {
         })
     }
 
-    const operatorTimeConvert = (ot?: Array<OTType>) => {
-        let otString: string = '-'
-        if(ot && ot.length){
-            otString = `${ot[0].day} ${ot[0].time ? `: ${ot[0].time}` : ''}`
-        }
-
-        return otString
-    }
-
     const postImageUpload = async (formData: FormData) => {
         const result = await formDataFetch(
             'admin/imageUpload',
@@ -89,8 +80,7 @@ const Home = () => {
             formData
         )
 
-        console.log('result', result)
-        router.back()
+        setInsertDataKey('image', result.publicUrl)
     }
 
     const handleClick = () => {
