@@ -1,4 +1,6 @@
-const FINYL_API = 'http://34.110.146.181/api/v1'
+import useSWR from "swr";
+
+export const FINYL_API = 'http://34.110.146.181/api/v1'
 
 type noAuthFetchType<T> = (api: string, method: 'GET' | 'POST', body?: any) => Promise<T>
 
@@ -29,7 +31,6 @@ const formDataFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
 
     return result
 }
-
 
 export {
     noAuthFetch,

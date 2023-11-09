@@ -11,7 +11,8 @@ import {
 } from "@nextui-org/react";
 import {Button, ButtonGroup} from "@nextui-org/react";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
-import {adminNoAuthFetch} from "@/api/api";
+import {adminNoAuthFetch, FINYL_API} from "@/api/api";
+import {Pagination} from "@nextui-org/pagination";
 
 interface OTType {
     day: string
@@ -29,24 +30,28 @@ interface cardType {
 }
 
 const Home = () => {
-    const router = useRouter()
+    const [totalPage, setTotalPage] = useState<number>(1)
+    const [page, setPage] = useState<number>(1);
     const [storeList, setStoreList] = useState<Array<cardType>>([])
 
+    const router = useRouter()
+
     useEffect(() => {
-        getStoreEntireInfo()
-    }, [])
+        getStoreEntireInfo(page)
+    }, [page]);
 
-    const getStoreEntireInfo = async () => {
-        const result = await adminNoAuthFetch('adminStoreEntireInfo', 'GET')
+    const getStoreEntireInfo = async (page: number) => {
+        const result: pagenationType<cardType> = await adminNoAuthFetch(`adminStoreEntireInfo?limit=10&page=${page}`, 'GET')
 
-        setStoreList([...result])
+        setTotalPage(result.result.totalPages)
+        setStoreList([...result.result.results])
     }
 
     const getStoreDelete = async (id: string) => {
         await adminNoAuthFetch('adminDelete', 'POST', {
             id: id
         }).then(() => {
-            getStoreEntireInfo()
+            getStoreEntireInfo(1)
         })
     }
 
@@ -71,7 +76,22 @@ const Home = () => {
                     생성
                 </Button>
             </div>
-            <Table aria-label="Example static collection table">
+            <Table
+                aria-label="Example static collection table"
+                bottomContent={
+                    <div className="flex w-full justify-center">
+                        <Pagination
+                            isCompact
+                            showControls
+                            showShadow
+                            color="secondary"
+                            page={page}
+                            total={totalPage}
+                            onChange={(page) => setPage(page)}
+                        />
+                    </div>
+                }
+            >
                 <TableHeader>
                     <TableColumn>매장명</TableColumn>
                     <TableColumn>주소</TableColumn>

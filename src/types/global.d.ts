@@ -4,6 +4,13 @@ declare global {
     }
 }
 
+interface pagenationType<T> {
+    result: {
+        results: Array<T>,
+        totalPages: number
+    }
+}
+
 interface storeInfoType {
     id?: string
     title: string
