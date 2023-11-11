@@ -9,9 +9,9 @@ import {
     TableRow,
     TableCell, Tooltip
 } from "@nextui-org/react";
-import {Button, ButtonGroup} from "@nextui-org/react";
+import {Button} from "@nextui-org/react";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
-import {adminNoAuthFetch, FINYL_API} from "@/api/api";
+import {adminNoAuthFetch} from "@/api/api";
 import {Pagination} from "@nextui-org/pagination";
 
 interface OTType {
