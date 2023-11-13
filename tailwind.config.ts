@@ -17,7 +17,7 @@ const config: Config = {
       },
     },
     fontFamily: {
-      'inter': 'val(--display-font)'
+      'inter': 'var(--display-font)'
     }
   },
   darkMode: "class",

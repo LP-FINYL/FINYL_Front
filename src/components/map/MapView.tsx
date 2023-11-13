@@ -10,9 +10,10 @@ interface MarkerGroup {
 
 interface props {
     setSelectedId: (id: string) => void
+    setCurrentLocation: (currentLocation: string) => void
 }
 
-const MapView:NextPage<props> = ({setSelectedId}) => {
+const MapView:NextPage<props> = ({setSelectedId, setCurrentLocation}) => {
     const [result, setResult] = useState<Array<any>>([])
     const [markers, setMarkers] = useState<Array<MarkerGroup>>([])
 
@@ -28,7 +29,7 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
     useEffect(() => {
         const kakaoMapScript = document.createElement('script')
         kakaoMapScript.async = false
-        kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=040ca9bab6805a5dc1355dd4141d7490&autoload=false`
+        kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=040ca9bab6805a5dc1355dd4141d7490&autoload=false&libraries=services`
         document.head.appendChild(kakaoMapScript)
 
         const onLoadKakaoAPI = () => {
@@ -40,6 +41,40 @@ const MapView:NextPage<props> = ({setSelectedId}) => {
                 }
 
                 var map = new window.kakao.maps.Map(container, options)
+
+                new window.kakao.maps.event.addListener(map, 'dragend', () => {
+                    // 지도 영역정보를 얻어옵니다
+                    var bounds = map.getBounds();
+                    var swLatlng = bounds.getSouthWest(); //남서
+                    var neLatlng = bounds.getNorthEast(); //북동
+
+                    let center = map.getCenter()
+                    var geocoder = new window.kakao.maps.services.Geocoder();
+
+                    searchAddrFromCoords(center, (result: any, status: any) => {
+                        if (status === window.kakao.maps.services.Status.OK) {
+                            if(result.length){
+                                result.map((v: any) => {
+                                    if(v.region_type === 'H') {
+                                        setCurrentLocation(v.address_name)
+                                    }
+                                })
+                            }
+                        }
+                    })
+
+                    function searchAddrFromCoords(coords: any, callback: any) {
+                        // 좌표로 행정동 주소 정보를 요청합니다
+                        geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
+                    }
+
+                    function searchDetailAddrFromCoords(coords: any, callback: any) {
+                        // 좌표로 법정동 상세 주소 정보를 요청합니다
+                        geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
+                    }
+
+                    console.log(swLatlng, neLatlng)
+                })
 
                 if(!markers.length){
                     const marker:Array<MarkerGroup> = result.map(v => {

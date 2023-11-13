@@ -3,18 +3,20 @@ import {useEffect, useState} from "react";
 import {NextPage} from "next";
 import Image from "next/image";
 import {ArrowBackIcon, ExternalLinkIcon, Icon} from '@chakra-ui/icons'
-import {IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, SkeletonText} from '@chakra-ui/react'
+import {Button, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, SkeletonText} from '@chakra-ui/react'
 import {noAuthFetch} from "@/api/api";
 import {CopyModal} from "@/components/modal/CopyModal";
 import {BsGlobe2, BsInstagram} from 'react-icons/bs'
 import {useRouter} from "next/navigation";
+import {IoLogoInstagram, IoLogoTwitter} from "react-icons/io";
+import {IoHomeSharp} from "react-icons/io5";
 
 interface props {
     selectedId?: string
     setSelectedId: (selectedId?: string) => void
 }
 
-const initStyle: string = 'absolute z-10 left-14 bottom-0 h-[800px] w-[393px] bg-white'
+const initStyle: string = 'absolute z-10 left-20 top-0 h-screen w-[393px] bg-white'
 
 const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
     const router = useRouter()
@@ -113,12 +115,45 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                 </div>
             </div>
             <div className={'flex flex-col p-6'}>
-                <SkeletonText noOfLines={1} isLoaded={!loading}>
-                <p className={"font-inter text-slate-600 text-sm font-normal leading-tight"}>{tags ?? ''}</p>
-                </SkeletonText>
-                <SkeletonText mt={2} noOfLines={1} isLoaded={!loading}>
-                <p className={"font-inter text-xl font-bold text-gray-900 leading-normal"}>{title ?? ''}</p>
-                </SkeletonText>
+                <div className={'flex justify-between'}>
+                    <div>
+                        <SkeletonText noOfLines={1} isLoaded={!loading}>
+                            <p className={"font-inter text-slate-600 text-sm font-normal leading-tight"}>{tags ?? ''}</p>
+                        </SkeletonText>
+                        <SkeletonText mt={2} noOfLines={1} isLoaded={!loading}>
+                            <p className={"font-inter text-xl font-bold text-gray-900 leading-normal"}>{title ?? ''}</p>
+                        </SkeletonText>
+                    </div>
+                    <div className={'flex gap-[9px]'}>
+                        {
+                            site && <IconButton
+                                aria-label={'instagram'}
+                                icon={<Icon as={IoLogoInstagram} color={'white'} className={'w-4 h-4'}/>}
+                                size={'sm'}
+                                variant={'solid'}
+                                className={'w-[30px] h-[30px] bg-gray-400 rounded-full'}
+                                onClick={() => goToUrl(site)}
+                            />
+                        }
+                        {
+                            instaUrl && <IconButton
+                                aria-label={'instagram'}
+                                icon={<Icon as={IoHomeSharp} color={'white'} className={'w-4 h-4'}/>}
+                                size={'sm'}
+                                variant={'solid'}
+                                className={'w-[30px] h-[30px] bg-gray-400 rounded-full'}
+                                onClick={() => goToUrl(instaUrl)}
+                            />
+                        }
+                        {/*<IconButton*/}
+                        {/*    aria-label={'instagram'}*/}
+                        {/*    icon={<Icon as={IoLogoTwitter} color={'white'} className={'w-4 h-4'}/>}*/}
+                        {/*    size={'sm'}*/}
+                        {/*    variant={'solid'}*/}
+                        {/*    className={'w-[30px] h-[30px] bg-gray-400 rounded-full'}*/}
+                        {/*/>*/}
+                    </div>
+                </div>
                 <SkeletonText my={2} noOfLines={1} isLoaded={!loading}>
                 <p className={"font-inter text-slate-600 text-sm font-normal my-[18px]"}>{address ?? ''}</p>
                 </SkeletonText>
