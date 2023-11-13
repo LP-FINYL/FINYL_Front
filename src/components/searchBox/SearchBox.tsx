@@ -21,7 +21,7 @@ const SearchBox: NextPage<props> = ({keyword, setKeyword}) => {
             <Input
                 size={'md'}
                 value={keyword}
-                placeholder={'Find your vinyl'} onChange={e => {
+                placeholder={'FINd your vinYL'} onChange={e => {
                     setKeyword(e.target.value)
                 }}
             />
