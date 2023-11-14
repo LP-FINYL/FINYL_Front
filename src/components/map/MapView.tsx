@@ -2,6 +2,10 @@
 import {useEffect, useState} from "react";
 import {NextPage} from "next";
 import {noAuthFetch} from "@/api/api";
+import {Map, MapMarker} from "react-kakao-maps-sdk";
+import Script from "next/script";
+
+const KAKAO_SDK_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=040ca9bab6805a5dc1355dd4141d7490&autoload=false&libraries=services`;
 
 interface MarkerGroup {
     id: string
@@ -11,110 +15,79 @@ interface MarkerGroup {
 interface props {
     setSelectedId: (id: string) => void
     setCurrentLocation: (currentLocation: string) => void
+    selectedId?: string
+    setStoreList: (list: Array<storeInfoType>) => void
+    storeList: Array<storeInfoType>
+    centerCoords?: [number, number]
 }
 
-const MapView:NextPage<props> = ({setSelectedId, setCurrentLocation}) => {
-    const [result, setResult] = useState<Array<any>>([])
-    const [markers, setMarkers] = useState<Array<MarkerGroup>>([])
+const MapView:NextPage<props> = ({storeList, setStoreList, setSelectedId, setCurrentLocation}) => {
+    const [centerCoords, setCenterCoords] = useState<{lat: number, lng: number}>({
+        lat: 37.557938025275, lng: 126.922059899484
+    })
 
-    const getLocation = async () => {
-        const location = await noAuthFetch('location', 'GET')
-        setResult(location)
+    const getLocationDirections = async (SWlatitude: number, SWlongitude: number, NElatitude: number, NElongitude: number) => {
+        const locations = await noAuthFetch(`locationDirections?SWlatitude=${SWlatitude}&SWlongitude=${SWlongitude}&NElatitude=${NElatitude}&NElongitude=${NElongitude}`, 'GET')
+        console.log(locations)
+
+        setStoreList(locations)
     }
 
     useEffect(() => {
-        getLocation()
-    }, []);
+        window.kakao.maps.load(() => {
+            var geocoder = new window.kakao.maps.services.Geocoder();
 
-    useEffect(() => {
-        const kakaoMapScript = document.createElement('script')
-        kakaoMapScript.async = false
-        kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=040ca9bab6805a5dc1355dd4141d7490&autoload=false&libraries=services`
-        document.head.appendChild(kakaoMapScript)
+            function searchAddrFromCoords(lat: number, lng: number, callback: any) {
+                // 좌표로 행정동 주소 정보를 요청합니다
+                geocoder.coord2RegionCode(lng, lat, callback);
+            }
 
-        const onLoadKakaoAPI = () => {
-            window.kakao.maps.load(() => {
-                var container = document.getElementById('map')
-                var options = {
-                    center: new window.kakao.maps.LatLng(37.557938025275, 126.922059899484),
-                    level: 3,
-                }
-
-                var map = new window.kakao.maps.Map(container, options)
-
-                new window.kakao.maps.event.addListener(map, 'dragend', () => {
-                    // 지도 영역정보를 얻어옵니다
-                    var bounds = map.getBounds();
-                    var swLatlng = bounds.getSouthWest(); //남서
-                    var neLatlng = bounds.getNorthEast(); //북동
-
-                    let center = map.getCenter()
-                    var geocoder = new window.kakao.maps.services.Geocoder();
-
-                    searchAddrFromCoords(center, (result: any, status: any) => {
-                        if (status === window.kakao.maps.services.Status.OK) {
-                            if(result.length){
-                                result.map((v: any) => {
-                                    if(v.region_type === 'H') {
-                                        setCurrentLocation(v.address_name)
-                                    }
-                                })
-                            }
+            if(centerCoords.lng && centerCoords.lat) {
+                searchAddrFromCoords(centerCoords.lat, centerCoords.lng, (result: any, status: any) => {
+                    for(var i = 0; i < result.length; i++) {
+                        // 행정동의 region_type 값은 'H' 이므로
+                        if (result[i].region_type === 'H') {
+                           setCurrentLocation(result[i].address_name)
+                            break;
                         }
-                    })
-
-                    function searchAddrFromCoords(coords: any, callback: any) {
-                        // 좌표로 행정동 주소 정보를 요청합니다
-                        geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), callback);
                     }
-
-                    function searchDetailAddrFromCoords(coords: any, callback: any) {
-                        // 좌표로 법정동 상세 주소 정보를 요청합니다
-                        geocoder.coord2Address(coords.getLng(), coords.getLat(), callback);
-                    }
-
-                    console.log(swLatlng, neLatlng)
                 })
-
-                if(!markers.length){
-                    const marker:Array<MarkerGroup> = result.map(v => {
-                        return {
-                            marker: addMarker(new window.kakao.maps.LatLng(v.latitude, v.longitude)),
-                            id: v.id
-                        }
-                    })
-
-                    setMarkers([...markers, ...marker])
-                }
-
-                function addMarker(position: any) {
-
-                    // 마커를 생성합니다
-                    var marker = new window.kakao.maps.Marker({
-                        position: position
-                    });
-
-                    // 생성된 마커를 배열에 추가합니다
-                    return marker
-                }
-
-                if(markers?.length){
-                    markers.map((marker) => {
-                        marker.marker.setMap(map)
-
-                        window.kakao.maps.event.addListener(marker.marker, 'click', () => {
-                            setSelectedId(marker.id)
-                        });
-                    })
-                }
-            })
-        }
-
-        kakaoMapScript.addEventListener('load', onLoadKakaoAPI)
-    }, [result.length, markers.length])
+            }
+        })
+    }, [centerCoords])
 
     return (
-        <div id="map" style={{ width: "100%", height: "100%" }}></div>
+        <>
+            <Script src={KAKAO_SDK_URL} strategy="beforeInteractive" />
+            <Map
+                center={{ lat: 37.557938025275, lng: 126.922059899484 }}
+                style={{ width: '100%', height: '100%' }}
+                onTileLoaded={(map) => {
+                    const sw = map.getBounds().getSouthWest()
+                    const ne = map.getBounds().getNorthEast()
+
+                    setCenterCoords({lat: map.getCenter().getLat(), lng: map.getCenter().getLng()})
+
+                    getLocationDirections(sw.getLat(), sw.getLng(), ne.getLat(), ne.getLng())
+                }}
+            >
+                {
+                    storeList.map(store => {
+                        if(store.longitude && store.latitude){
+                            return <MapMarker
+                                key={store.id}
+                                position={{
+                                    lat: store.latitude,
+                                    lng: store.longitude
+                                }}
+                            />
+                        }else{
+                            return <></>
+                        }
+                    })
+                }
+            </Map>
+        </>
     )
 }
 

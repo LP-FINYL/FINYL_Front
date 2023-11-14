@@ -15,9 +15,9 @@ const SummaryResultCard: NextPage<props> = ({}) => {
     const router = useRouter()
     const [keyword, setKeyword] = useState<string>("")
 
-    return <div className={'w-[248px] h-auto'}>
+    return <div className={'w-[248px] h-auto cursor-pointer'} >
         <div className={'w-[248px] h-[248px]'}>
-            <div className={'absolute w-[248px] h-[248px]'} >
+            <div className={'relative w-[248px] h-[248px]'} >
                 <Image
                     src={'https://lh3.googleusercontent.com/p/AF1QipNziqUN_0xcqb5iKZw1wXZs9TbaJM0eaXbaA_3c=s680-w680-h510'}
                     alt={'SMC'}

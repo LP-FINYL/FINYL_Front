@@ -22,5 +22,6 @@ const config: Config = {
   },
   darkMode: "class",
   plugins: [nextui()],
+  mode: "jit",
 }
 export default config

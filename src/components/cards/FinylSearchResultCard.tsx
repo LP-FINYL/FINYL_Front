@@ -18,7 +18,7 @@ const FinylSearchResultCard: NextPage<props> = ({currentLocation, selectedId, se
     const [keyword, setKeyword] = useState<string>("")
 
     return <div className={`${initStyle} p-3`}>
-        <div className={'w-full'}>
+        <div className={'w-full h-[140px]'}>
             <SearchBox keyword={keyword} setKeyword={setKeyword} />
             <div className={'pt-9 pb-[18px]'}>
                 <p className={'text-gray-900 text-xl font-bold font-inter leading-normal'}>
@@ -28,8 +28,11 @@ const FinylSearchResultCard: NextPage<props> = ({currentLocation, selectedId, se
                     {currentLocation}
                 </p>
             </div>
-            <SummaryResultCard/>
         </div>
+        <div className={'flex flex-col h-[800px] gap-3 overflow-y-auto'}>
+            <SummaryResultCard/><SummaryResultCard/>
+        </div>
+
     </div>
 }
 

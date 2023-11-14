@@ -6,12 +6,9 @@ import SideTab from "@/components/sideTab/SideTab";
 import FinylSearchResultCard from "@/components/cards/FinylSearchResultCard";
 
 const Home = () => {
+    const [storeList, setStoreList] = useState<Array<storeInfoType>>([])
     const [selectId, setSelectId] = useState<string | undefined>(undefined)
     const [currentLocation, setCurrentLocation] = useState<string>("")
-
-    useEffect(() => {
-        console.log(currentLocation)
-    }, [currentLocation]);
 
     return (
       <div className="w-full flex flex-col items-center justify-center">
@@ -22,7 +19,13 @@ const Home = () => {
                 <FinylMainCard selectedId={selectId} setSelectedId={setSelectId} />
             </div>
             <div className={'h-full ml-20'}>
-                <MapView setSelectedId={(id) => setSelectId(id)} setCurrentLocation={(currentLocation: string) => setCurrentLocation(currentLocation)} />
+                <MapView
+                    storeList={storeList}
+                    selectedId={selectId}
+                    setSelectedId={(id) => setSelectId(id)}
+                    setCurrentLocation={(currentLocation: string) => setCurrentLocation(currentLocation)}
+                    setStoreList={(list) => setStoreList([...list])}
+                />
             </div>
         </div>
       </div>
