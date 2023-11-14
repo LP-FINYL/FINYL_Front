@@ -21,14 +21,13 @@ interface props {
     centerCoords?: [number, number]
 }
 
-const MapView:NextPage<props> = ({storeList, setStoreList, setSelectedId, setCurrentLocation}) => {
+const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelectedId, setCurrentLocation}) => {
     const [centerCoords, setCenterCoords] = useState<{lat: number, lng: number}>({
         lat: 37.557938025275, lng: 126.922059899484
     })
 
     const getLocationDirections = async (SWlatitude: number, SWlongitude: number, NElatitude: number, NElongitude: number) => {
         const locations = await noAuthFetch(`locationDirections?SWlatitude=${SWlatitude}&SWlongitude=${SWlongitude}&NElatitude=${NElatitude}&NElongitude=${NElongitude}`, 'GET')
-        console.log(locations)
 
         setStoreList(locations)
     }
@@ -76,6 +75,9 @@ const MapView:NextPage<props> = ({storeList, setStoreList, setSelectedId, setCur
                         if(store.longitude && store.latitude){
                             return <MapMarker
                                 key={store.id}
+                                onClick={() => {
+                                    store.id && setSelectedId(store.id)
+                                }}
                                 position={{
                                     lat: store.latitude,
                                     lng: store.longitude

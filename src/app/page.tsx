@@ -4,6 +4,7 @@ import FinylMainCard from "@/components/cards/FinylMainCard";
 import MapView from "@/components/map/MapView";
 import SideTab from "@/components/sideTab/SideTab";
 import FinylSearchResultCard from "@/components/cards/FinylSearchResultCard";
+import FinylLocationDirectionsCard from "@/components/cards/FinylLocationDirectionsCard";
 
 const Home = () => {
     const [storeList, setStoreList] = useState<Array<storeInfoType>>([])
@@ -15,7 +16,7 @@ const Home = () => {
         <div className="w-full h-screen">
             <div className={'w-20'}>
                 <SideTab />
-                <FinylSearchResultCard currentLocation={currentLocation} selectedId={selectId} setSelectedId={setSelectId} />
+                <FinylLocationDirectionsCard currentLocation={currentLocation} storeList={storeList} selectedId={selectId} setSelectedId={setSelectId} />
                 <FinylMainCard selectedId={selectId} setSelectedId={setSelectId} />
             </div>
             <div className={'h-full ml-20'}>
