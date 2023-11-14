@@ -17,6 +17,7 @@ const Home = () => {
             <div className={'w-20'}>
                 <SideTab />
                 <FinylLocationDirectionsCard currentLocation={currentLocation} storeList={storeList} selectedId={selectId} setSelectedId={setSelectId} />
+                <FinylSearchResultCard  />
                 <FinylMainCard selectedId={selectId} setSelectedId={setSelectId} />
             </div>
             <div className={'h-full ml-20'}>
