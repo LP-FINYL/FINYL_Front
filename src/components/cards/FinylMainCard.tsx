@@ -9,14 +9,14 @@ import {CopyModal} from "@/components/modal/CopyModal";
 import {BsGlobe2, BsInstagram} from 'react-icons/bs'
 import {useRouter} from "next/navigation";
 import {IoLogoInstagram, IoLogoTwitter} from "react-icons/io";
-import {IoHomeSharp} from "react-icons/io5";
+import {IoChevronForward, IoHomeSharp} from "react-icons/io5";
 
 interface props {
     selectedId?: string
     setSelectedId: (selectedId?: string) => void
 }
 
-const initStyle: string = 'absolute z-10 left-20 top-0 h-screen w-[393px] bg-white'
+const initStyle: string = 'absolute z-10 left-[376px] top-0 h-screen w-[393px] bg-white'
 
 const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
     const router = useRouter()
@@ -126,23 +126,23 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                     </div>
                     <div className={'flex gap-[9px]'}>
                         {
-                            site && <IconButton
+                            instaUrl && <IconButton
                                 aria-label={'instagram'}
                                 icon={<Icon as={IoLogoInstagram} color={'white'} className={'w-4 h-4'}/>}
                                 size={'sm'}
                                 variant={'solid'}
                                 className={'w-[30px] h-[30px] bg-gray-400 rounded-full'}
-                                onClick={() => goToUrl(site)}
+                                onClick={() => goToUrl(instaUrl)}
                             />
                         }
                         {
-                            instaUrl && <IconButton
+                            site && <IconButton
                                 aria-label={'instagram'}
                                 icon={<Icon as={IoHomeSharp} color={'white'} className={'w-4 h-4'}/>}
                                 size={'sm'}
                                 variant={'solid'}
                                 className={'w-[30px] h-[30px] bg-gray-400 rounded-full'}
-                                onClick={() => goToUrl(instaUrl)}
+                                onClick={() => goToUrl(site)}
                             />
                         }
                         {/*<IconButton*/}
@@ -196,6 +196,18 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                             </div>
                         </SkeletonText>
                     </div>
+                </div>
+                <div
+                    className={'flex justify-between mt-9 cursor-pointer items-center'}
+                    onClick={() => {
+                        window.open(`https://search.naver.com/search.naver?where=view&sm=tab_jum&query=lp ${title}`)
+                    }}
+                >
+                    <div>
+                        <p className={'font-inter text-gray-900 text-base font-bold leading-tight'}>레코드샵 리뷰</p>
+                        <p className={'font-inter text-slate-500 text-xs font-normal leading-none'}>네이버 블로그의 후기 모음으로 이동합니다</p>
+                    </div>
+                    <Icon as={IoChevronForward} color={'gray.400'}/>
                 </div>
             </div>
         </div>

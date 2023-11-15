@@ -10,29 +10,31 @@ import {noAuthFetch} from "@/api/api";
 import {Icon} from "@chakra-ui/icons";
 
 interface props {
-    currentLocation: string
     selectedId?: string
     setSelectedId: (selectedId?: string) => void
     storeList: Array<storeInfoType>
+    isSearchCard?: boolean
+    setIsSearchCard?: (isSearchCard: boolean) => void
+    setStoreList?: (storeList: Array<storeInfoType>) => void
+    setCenter?: (center: {lat: number, lng: number}) => void
 }
 
 const initStyle: string = 'absolute z-20 left-0 bottom-0 h-[95vh] w-[296px] bg-white rounded-t-[9px] border border-black/50-200'
 
-const FinylSearchResultCard: NextPage<props> = ({}) => {
+const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, isSearchCard, storeList, setStoreList, setIsSearchCard, setCenter}) => {
     const [isSearch, setIsSearch] = useState<boolean>(false)
     const [keyword, setKeyword] = useState<string>("")
     const [searchKeyword, setSearchKeyword] = useState<string>("")
-    const [searchResult, setSearchResult] = useState<Array<storeInfoType>>([])
 
     const searchStore = async () => {
         const results = await noAuthFetch(`search?keyword=${keyword}`, 'GET')
 
         setIsSearch(true)
         setSearchKeyword(keyword)
-        setSearchResult([...results])
+        setStoreList && setStoreList([...results])
     }
 
-    return <div className={'absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50'}>
+    return <div className={`absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50${!isSearchCard ? " hidden" : ""}`}>
         <div className={`${initStyle} px-6 pt-4`}>
             <div>
                 <div className={'w-full h-[140px]'}>
@@ -43,6 +45,10 @@ const FinylSearchResultCard: NextPage<props> = ({}) => {
                             variant={'ghost'}
                             size={'sm'}
                             className={'mb-3'}
+                            onClick={() => {
+                                setIsSearchCard && setIsSearchCard(false)
+                                setSelectedId(undefined)
+                            }}
                         />
                     </div>
                     <SearchBox
@@ -55,6 +61,7 @@ const FinylSearchResultCard: NextPage<props> = ({}) => {
                             setIsSearch(false)
                             setSearchKeyword('')
                             setKeyword('')
+                            setStoreList && setStoreList([])
                         }}
                     />
                     {
@@ -64,14 +71,27 @@ const FinylSearchResultCard: NextPage<props> = ({}) => {
                                     {`'${searchKeyword}' 에 대한 검색 결과`}
                                 </p>
                                 <p className={'font-inter text-slate-500 text-sm font-normal leading-tight'}>
-                                    {searchResult.length ? `${searchResult.length}개 결과` : '검색 결과가 없습니다.'}
+                                    {storeList.length ? `${storeList.length}개 결과` : '검색 결과가 없습니다.'}
                                 </p>
                             </div>
                             {
-                                searchResult.length ? <div className={'py-3'}>
+                                storeList.length ? <div className={'py-3'}>
                                     {
-                                        searchResult.map(store => {
-                                            return <ResultItem key={store.id} store={store} />
+                                        storeList.map(store => {
+                                            return <ResultItem
+                                                key={store.id}
+                                                store={store}
+                                                onClick={() => {
+                                                    setSelectedId(store.id)
+                                                    if(store.latitude && store.longitude) {
+                                                        setCenter && setCenter({
+                                                            lat: store.latitude,
+                                                            lng: store.longitude
+                                                        })
+                                                    }
+
+                                                }}
+                                            />
                                         })
                                     }
                                 </div> : <></>

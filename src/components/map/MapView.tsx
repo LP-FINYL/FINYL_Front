@@ -18,13 +18,17 @@ interface props {
     selectedId?: string
     setStoreList: (list: Array<storeInfoType>) => void
     storeList: Array<storeInfoType>
-    centerCoords?: [number, number]
+    centerCoords: { lat: number, lng: number }
 }
 
-const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelectedId, setCurrentLocation}) => {
-    const [centerCoords, setCenterCoords] = useState<{lat: number, lng: number}>({
-        lat: 37.557938025275, lng: 126.922059899484
-    })
+const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelectedId, setCurrentLocation, centerCoords}) => {
+    const [center, setCenter] = useState<{lat: number, lng: number}>(centerCoords)
+
+    useEffect(() => {
+        if(centerCoords){
+            setCenter(centerCoords)
+        }
+    }, [centerCoords]);
 
     const getLocationDirections = async (SWlatitude: number, SWlongitude: number, NElatitude: number, NElongitude: number) => {
         const locations = await noAuthFetch(`locationDirections?SWlatitude=${SWlatitude}&SWlongitude=${SWlongitude}&NElatitude=${NElatitude}&NElongitude=${NElongitude}`, 'GET')
@@ -41,8 +45,8 @@ const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelect
                 geocoder.coord2RegionCode(lng, lat, callback);
             }
 
-            if(centerCoords.lng && centerCoords.lat) {
-                searchAddrFromCoords(centerCoords.lat, centerCoords.lng, (result: any, status: any) => {
+            if(center.lng && center.lat) {
+                searchAddrFromCoords(center.lat, center.lng, (result: any, status: any) => {
                     for(var i = 0; i < result.length; i++) {
                         // 행정동의 region_type 값은 'H' 이므로
                         if (result[i].region_type === 'H') {
@@ -59,13 +63,13 @@ const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelect
         <>
             <Script src={KAKAO_SDK_URL} strategy="beforeInteractive" />
             <Map
-                center={{ lat: 37.557938025275, lng: 126.922059899484 }}
+                center={center}
                 style={{ width: '100%', height: '100%' }}
                 onTileLoaded={(map) => {
                     const sw = map.getBounds().getSouthWest()
                     const ne = map.getBounds().getNorthEast()
 
-                    setCenterCoords({lat: map.getCenter().getLat(), lng: map.getCenter().getLng()})
+                    setCenter({lat: map.getCenter().getLat(), lng: map.getCenter().getLng()})
 
                     getLocationDirections(sw.getLat(), sw.getLng(), ne.getLat(), ne.getLng())
                 }}
@@ -77,6 +81,12 @@ const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelect
                                 key={store.id}
                                 onClick={() => {
                                     store.id && setSelectedId(store.id)
+                                    if(store.latitude && store.longitude){
+                                        setCenter({
+                                            lat: store.latitude,
+                                            lng: store.longitude
+                                        })
+                                    }
                                 }}
                                 position={{
                                     lat: store.latitude,
