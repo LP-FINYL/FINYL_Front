@@ -6,7 +6,7 @@ import {useState} from "react";
 import SummaryResultCard from "@/components/cards/SummaryResultCard";
 import {Button} from "@chakra-ui/react";
 import {Icon} from "@chakra-ui/icons";
-import {IoSearch} from "react-icons/io5";
+import {IoArrowBack, IoSearch} from "react-icons/io5";
 
 interface props {
     currentLocation: string
@@ -22,26 +22,42 @@ const initStyle: string = 'absolute z-10 left-20 top-0 h-[100vh] w-[296px] bg-wh
 const FinylLocationDirectionsCard: NextPage<props> = ({storeList, currentLocation, selectedId, setSelectedId, setIsSearchCard, setCenter}) => {
     const router = useRouter()
 
-    return <div className={`${initStyle} pt-12 px-3`}>
-        <div className={'w-full'}>
-            <div className={'pb-[18px]'}>
-                <div className={'w-full flex justify-between'}>
+    return <div className={`${initStyle} pt-12 `}>
+        <div className={'w-full px-[21px]'}>
+            {/*<div className={'mb-[18px] pb-[18px] border-b border-gray-200'}>*/}
+            {/*    <div className={'w-full flex justify-between'}>*/}
+            {/*        <p className={'text-gray-900 text-xl font-bold font-inter leading-normal'}>*/}
+            {/*            현재 지역의 레코드샵*/}
+            {/*        </p>*/}
+            {/*        <div className={'w-6 h-6 cursor-pointer'} onClick={() => {*/}
+            {/*            setIsSearchCard && setIsSearchCard(true)*/}
+            {/*            setSelectedId(undefined)*/}
+            {/*        }}>*/}
+            {/*            <Icon as={IoSearch} boxSize={6} />*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*    <p className={'font-inter text-slate-600 text-sm font-normal leading-tight'}>*/}
+            {/*        {currentLocation}*/}
+            {/*    </p>*/}
+            {/*</div>*/}
+            <div className={'flex justify-between items-center mb-[18px] pb-[18px] border-b border-gray-200'}>
+                <div>
                     <p className={'text-gray-900 text-xl font-bold font-inter leading-normal'}>
                         현재 지역의 레코드샵
                     </p>
-                    <div className={'w-6 h-6 cursor-pointer'} onClick={() => {
-                        setIsSearchCard && setIsSearchCard(true)
-                        setSelectedId(undefined)
-                    }}>
-                        <Icon as={IoSearch} boxSize={6} />
-                    </div>
+                    <p className={'font-inter text-slate-600 text-sm font-normal leading-tight'}>
+                        {currentLocation}
+                    </p>
                 </div>
-                <p className={'font-inter text-slate-600 text-sm font-normal leading-tight'}>
-                    {currentLocation}
-                </p>
+                <div className={'w-6 h-6 cursor-pointer'} onClick={() => {
+                    setIsSearchCard && setIsSearchCard(true)
+                    setSelectedId(undefined)
+                }}>
+                    <Icon as={IoSearch} boxSize={6} />
+                </div>
             </div>
         </div>
-        <div className={'flex flex-col h-[90%] gap-3 overflow-y-auto items-center'}>
+        <div className={'flex flex-col h-[88%] gap-[18px] overflow-y-auto items-center'}>
             {
                 storeList.map(store => {
                     return <SummaryResultCard

@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import SearchBox from "@/components/searchBox/SearchBox";
 import {useState} from "react";
 import {IconButton, Skeleton, SkeletonText} from "@chakra-ui/react";
-import {IoClose} from "react-icons/io5";
+import {IoArrowBack, IoClose, IoSearch} from "react-icons/io5";
 import ResultItem from "@/components/ResultItem";
 import {noAuthFetch} from "@/api/api";
 import {Icon} from "@chakra-ui/icons";
@@ -19,7 +19,7 @@ interface props {
     setCenter?: (center: {lat: number, lng: number}) => void
 }
 
-const initStyle: string = 'absolute z-20 left-0 bottom-0 h-[95vh] w-[296px] bg-white rounded-t-[9px] border border-black/50-200'
+const initStyle: string = 'absolute z-20 left-0 bottom-0 h-screen w-[296px] bg-white border-r border-black/50-200'
 
 const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, isSearchCard, storeList, setStoreList, setIsSearchCard, setCenter}) => {
     const [isSearch, setIsSearch] = useState<boolean>(false)
@@ -35,21 +35,28 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, isSe
     }
 
     return <div className={`absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50${!isSearchCard ? " hidden" : ""}`}>
-        <div className={`${initStyle} px-6 pt-4`}>
+        <div className={`${initStyle} px-[21px] pt-12`}>
             <div>
                 <div className={'w-full h-[140px]'}>
-                    <div className={'flex justify-end'}>
-                        <IconButton
-                            aria-label={''}
-                            icon={<Icon aria-label={'x'} as={IoClose} boxSize={21} />}
-                            variant={'ghost'}
-                            size={'sm'}
-                            className={'mb-3'}
-                            onClick={() => {
-                                setIsSearchCard && setIsSearchCard(false)
-                                setSelectedId(undefined)
-                            }}
-                        />
+                    <div className={'flex justify-between items-center mb-[18px] pb-[18px] border-b border-gray-200'}>
+                        <div>
+                            <p className={'text-gray-900 text-xl font-bold font-inter leading-normal'}>
+                                레코드샵 검색
+                            </p>
+                            <p className={'font-inter text-slate-600 text-sm font-normal leading-tight'}>
+                                FINd your vinYL
+                            </p>
+                        </div>
+                        <div className={'w-6 h-6 cursor-pointer'} onClick={() => {
+                            setIsSearch(false)
+                            setSearchKeyword('')
+                            setKeyword('')
+                            setStoreList && setStoreList([])
+                            setIsSearchCard && setIsSearchCard(false)
+                            setSelectedId(undefined)
+                        }}>
+                            <Icon as={IoArrowBack} boxSize={6} />
+                        </div>
                     </div>
                     <SearchBox
                         keyword={keyword}
