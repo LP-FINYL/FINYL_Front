@@ -11,8 +11,10 @@ import {
 } from "@nextui-org/react";
 import {Button} from "@nextui-org/react";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
-import {adminNoAuthFetch} from "@/api/api";
+import {adminFetch} from "@/api/api";
 import {Pagination} from "@nextui-org/pagination";
+import {getCookie, setCookie} from 'cookies-next';
+import {checkToken} from "@/components/Functions/useFunctions";
 
 interface OTType {
     day: string
@@ -37,18 +39,20 @@ const Home = () => {
     const router = useRouter()
 
     useEffect(() => {
+        if(!checkToken()) return router.replace('/admin')
+
         getStoreEntireInfo(page)
     }, [page]);
 
     const getStoreEntireInfo = async (page: number) => {
-        const result: pagenationType<cardType> = await adminNoAuthFetch(`adminStoreEntireInfo?limit=10&page=${page}`, 'GET')
+        const result: pagenationType<cardType> = await adminFetch(`adminStoreEntireInfo?limit=10&page=${page}`, 'GET')
 
         setTotalPage(result.result.totalPages)
         setStoreList([...result.result.results])
     }
 
     const getStoreDelete = async (id: string) => {
-        await adminNoAuthFetch('adminDelete', 'POST', {
+        await adminFetch('adminDelete', 'POST', {
             id: id
         }).then(() => {
             getStoreEntireInfo(1)

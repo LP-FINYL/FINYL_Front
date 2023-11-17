@@ -1,4 +1,4 @@
-import useSWR from "swr";
+import {getCookie, setCookie} from 'cookies-next';
 
 export const FINYL_API = 'http://34.110.146.181/api/v1'
 
@@ -12,11 +12,14 @@ const noAuthFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
     return result
 }
 
-const adminNoAuthFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
+const adminFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
+    const token = getCookie('accessToken')
+
     const result = await fetch(`${FINYL_API}/admin/${api}`, {
         method: method,
         headers : {               //데이터 타입 지정
-            "Content-Type":"application/json; charset=utf-8"
+            "Content-Type":"application/json; charset=utf-8",
+            Authorization: token ?? ""
         },
         body: JSON.stringify(body)
     }).then(res => res.json()).then(data => data)
@@ -25,7 +28,13 @@ const adminNoAuthFetch: noAuthFetchType<any> = async (api, method, body?: any) =
 }
 
 const authFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
-    const result = await globalFetch(`auth/${api}`, method, body)
+    const result = await fetch(`${FINYL_API}/auth/${api}`, {
+        method: method,
+        headers : {               //데이터 타입 지정
+            "Content-Type":"application/json; charset=utf-8"
+        },
+        body: JSON.stringify(body)
+    }).then(res => res.json()).then(data => data)
 
     return result
 }
@@ -38,22 +47,9 @@ const formDataFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
     return result
 }
 
-const globalFetch = async (input: string, method: "GET" | "POST", body?: any) => {
-    const result = await fetch(`${FINYL_API}/${input}`, {
-        method: method,
-        headers : {               //데이터 타입 지정
-            "Content-Type":"application/json; charset=utf-8"
-        },
-        credentials : 'include',
-        body: JSON.stringify(body)
-    }).then(res => res.json()).then(data => data)
-
-    return result
-}
-
 export {
     noAuthFetch,
-    adminNoAuthFetch,
+    adminFetch,
     authFetch,
     formDataFetch
 }

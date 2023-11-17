@@ -14,11 +14,12 @@ import {
 } from "@nextui-org/react";
 import DaumPost from "@/components/searchAddress/DaumPost";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
-import {adminNoAuthFetch, formDataFetch, noAuthFetch} from "@/api/api";
+import {adminFetch, formDataFetch, noAuthFetch} from "@/api/api";
 import {useRouter} from "next/navigation"
 import {NextPage} from "next";
 import Image from "next/image";
 import {Skeleton} from "@chakra-ui/react";
+import {checkToken} from "@/components/Functions/useFunctions";
 
 interface OTType {
     day: string
@@ -57,6 +58,8 @@ const Home: NextPage<props> = ({params}) => {
     const [inputOTData, setInputOTData] = useState<OTType>({day: '', time: ''})
 
     useEffect(() => {
+        if(!checkToken()) return router.replace('/admin')
+
         getCardData()
     }, []);
 
@@ -76,7 +79,7 @@ const Home: NextPage<props> = ({params}) => {
     }
 
     const postAdminCreate = async () => {
-        const result = await adminNoAuthFetch('adminUpdate', "POST", {
+        const result = await adminFetch('adminUpdate', "POST", {
             ...insertData,
             operatorTime: JSON.stringify(operatorTime)
         })

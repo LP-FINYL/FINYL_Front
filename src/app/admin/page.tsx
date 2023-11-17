@@ -2,16 +2,21 @@
 import {Button, Input} from "@nextui-org/react";
 import {useState} from "react";
 import {EyeFilledIcon, EyeSlashFilledIcon} from "@nextui-org/shared-icons";
-import {adminNoAuthFetch, authFetch} from "@/api/api";
+import {authFetch} from "@/api/api";
+import {useRouter} from "next/navigation";
+
+import {getCookie, setCookie} from 'cookies-next';
 
 interface loginInfoType {
-    username: string
+    id: string
     password: string
 }
 
 const Home = () => {
+    const router = useRouter()
+
     const [loginInfo, setLoginInfo] = useState<loginInfoType>({
-        username: '',
+        id: '',
         password: ''
     })
     const [isVisible, setIsVisible] = useState(false);
@@ -27,7 +32,10 @@ const Home = () => {
     const login = async (loginInfo: loginInfoType) => {
         const result = await authFetch('login', "POST", loginInfo)
 
-        console.log('result', result)
+        if(result.success){
+            setCookie('accessToken', result.token)
+            router.push('/admin/dashboard')
+        }
     }
 
     return (
@@ -39,10 +47,10 @@ const Home = () => {
                   label={'ID'}
                   placeholder={'ID를 입력해 주세요.'}
                   onKeyDown={onKeyDownEnter}
-                  value={loginInfo.username}
+                  value={loginInfo.id}
                   onChange={(e) => setLoginInfo({
                       ...loginInfo,
-                      username: e.target.value
+                      id: e.target.value
                   })}
               />
               <Input
@@ -66,9 +74,7 @@ const Home = () => {
                       password: e.target.value
                   })}
               />
-              <Button className={'w-full mt-10'} color={'primary'} type="button" onClick={() => {
-                  login(loginInfo)
-              }}>
+              <Button className={'w-full mt-10'} color={'primary'} type="button" onClick={() => login(loginInfo)}>
                   <p>Login</p>
               </Button>
           </div>

@@ -14,9 +14,10 @@ import {
 } from "@nextui-org/react";
 import DaumPost from "@/components/searchAddress/DaumPost";
 import {DeleteIcon, EditIcon} from "@nextui-org/shared-icons";
-import {adminNoAuthFetch, formDataFetch} from "@/api/api";
+import {adminFetch, formDataFetch} from "@/api/api";
 import {useRouter} from "next/navigation"
 import Image from "next/image";
+import {checkToken} from "@/components/Functions/useFunctions";
 
 interface OTType {
     day: string
@@ -47,6 +48,10 @@ const Home = () => {
     const [operatorTime, setOperatorTime] = useState<Array<OTType>>([])
     const [inputOTData, setInputOTData] = useState<OTType>({day: '', time: ''})
 
+    useEffect(() => {
+        if(!checkToken()) return router.replace('/admin')
+    }, []);
+
     const setInsertDataKey = (key: string, changeData: string) => {
         setInsertData({
             ...insertData,
@@ -55,7 +60,7 @@ const Home = () => {
     }
 
     const postAdminCreate = async () => {
-        const result = await adminNoAuthFetch('adminCreate', "POST", {
+        const result = await adminFetch('adminCreate', "POST", {
             ...insertData,
             operatorTime: JSON.stringify(operatorTime)
         })
