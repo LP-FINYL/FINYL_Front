@@ -28,10 +28,13 @@ const adminFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
 }
 
 const authFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
+    const token = getCookie('accessToken')
+
     const result = await fetch(`${FINYL_API}/auth/${api}`, {
         method: method,
         headers : {               //데이터 타입 지정
-            "Content-Type":"application/json; charset=utf-8"
+            "Content-Type":"application/json; charset=utf-8",
+            Authorization: token ?? ""
         },
         body: JSON.stringify(body)
     }).then(res => res.json()).then(data => data)

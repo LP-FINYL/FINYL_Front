@@ -15,6 +15,7 @@ import {adminFetch} from "@/api/api";
 import {Pagination} from "@nextui-org/pagination";
 import {getCookie, setCookie} from 'cookies-next';
 import {checkToken} from "@/components/Functions/useFunctions";
+import AdminHeader from "@/components/sideTab/AdminHeader";
 
 interface OTType {
     day: string
@@ -71,8 +72,9 @@ const Home = () => {
 
     return (
       <div className="w-full flex flex-col items-center justify-center">
+          <AdminHeader />
         <div className="w-full h-screen p-6">
-            <div className={'flex justify-between py-6'}>
+            <div className={'flex justify-between pb-6'}>
                 <p className={'font-inter font-bold text-2xl'}>
                     STORE INFO
                 </p>
