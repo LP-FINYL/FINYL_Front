@@ -19,9 +19,10 @@ interface props {
     setStoreList: (list: Array<storeInfoType>) => void
     storeList: Array<storeInfoType>
     centerCoords: { lat: number, lng: number }
+    zoomLevel: number
 }
 
-const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelectedId, setCurrentLocation, centerCoords}) => {
+const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelectedId, setCurrentLocation, centerCoords, zoomLevel}) => {
     const [center, setCenter] = useState<{lat: number, lng: number}>(centerCoords)
 
     useEffect(() => {
@@ -63,6 +64,8 @@ const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelect
         <>
             <Script src={KAKAO_SDK_URL} strategy="beforeInteractive" />
             <Map
+                level={zoomLevel}
+                zoomable={true}
                 center={center}
                 style={{ width: '100%', height: '100%' }}
                 onTileLoaded={(map) => {

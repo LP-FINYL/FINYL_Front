@@ -13,6 +13,7 @@ const Home = () => {
 
     const [selectId, setSelectId] = useState<string | undefined>(undefined)
     const [currentLocation, setCurrentLocation] = useState<string>("")
+    const [mapZoomLevel, setMapZoomLevel] = useState<number>(6)
     const [center, setCenter] = useState<{lat: number, lng: number}>({
         lat: 37.557938025275, lng: 126.922059899484
     })
@@ -30,6 +31,7 @@ const Home = () => {
                     setSelectedId={setSelectId}
                     setIsSearchCard={(isSearchCard: boolean) => setIsSearchCard(isSearchCard)}
                     setCenter={(center) => setCenter(center)}
+                    setZoomLevel={(level) => setMapZoomLevel(level)}
                 />
                 <FinylSearchResultCard
                     isSearchCard={isSearchCard}
@@ -47,6 +49,7 @@ const Home = () => {
                 <MapView
                     storeList={isSearchCard ? searchList : directionList}
                     selectedId={selectId}
+                    zoomLevel={mapZoomLevel}
                     setSelectedId={(id) => setSelectId(id)}
                     setCurrentLocation={(currentLocation: string) => setCurrentLocation(currentLocation)}
                     setStoreList={(list) => setDirectionList([...list])}
