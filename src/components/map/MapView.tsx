@@ -58,7 +58,7 @@ const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelect
                 })
             }
         })
-    }, [centerCoords])
+    }, [center])
 
     return (
         <>

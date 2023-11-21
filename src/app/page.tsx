@@ -18,7 +18,6 @@ const Home = () => {
         lat: 37.557938025275, lng: 126.922059899484
     })
 
-
     return (
       <div className="w-full flex flex-col items-center justify-center">
         <div className="w-full h-screen">

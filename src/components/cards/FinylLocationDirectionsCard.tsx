@@ -7,7 +7,7 @@ import SummaryResultCard from "@/components/cards/SummaryResultCard";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Select} from "@chakra-ui/react";
 import {Icon} from "@chakra-ui/icons";
 import {IoArrowBack, IoSearch} from "react-icons/io5";
-import {locations, locationType} from "@/static/locations/locations";
+import {changeCityName, locations, locationType} from "@/static/locations/locations";
 
 interface props {
     currentLocation: string
@@ -27,8 +27,17 @@ const FinylLocationDirectionsCard: NextPage<props> = ({storeList, currentLocatio
     const [subLocation, setSubLocation] = useState<string>("전체")
 
     useEffect(() => {
-        console.log(location)
-    }, [location]);
+        if(currentLocation){
+            const tmp = currentLocation.split(" ")
+            setLocation(changeCityName(tmp[0]))
+            setSubLocation(tmp[1])
+        }
+    }, [currentLocation]);
+
+    const changeCenter = (city: string, county: string) => {
+        setCenter && setCenter(locations[city][county])
+        setZoomLevel && setZoomLevel(county === '전체' ? 9 : 6)
+    }
 
     return <div className={`${initStyle} pt-12 `}>
         <div className={'w-full px-[21px]'}>
@@ -45,6 +54,9 @@ const FinylLocationDirectionsCard: NextPage<props> = ({storeList, currentLocatio
                                 value={location}
                                 onChange={(e) => {
                                     setLocation(e.target.value)
+                                    setSubLocation("전체")
+
+                                    changeCenter(e.target.value, "전체")
                                 }}
                             >
                                 {
@@ -64,8 +76,7 @@ const FinylLocationDirectionsCard: NextPage<props> = ({storeList, currentLocatio
                                         onChange={(e) => {
                                             setSubLocation(e.target.value)
 
-                                            setCenter && setCenter(locations[location][e.target.value])
-                                            setZoomLevel && setZoomLevel(e.target.value === '전체' ? 9 : 6)
+                                            changeCenter(location, e.target.value)
                                         }}
                                     >
                                         {
