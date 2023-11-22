@@ -28,18 +28,14 @@ const Home = () => {
                     storeList={directionList}
                     selectedId={selectId}
                     setSelectedId={setSelectId}
-                    setIsSearchCard={(isSearchCard: boolean) => setIsSearchCard(isSearchCard)}
                     setCenter={(center) => setCenter(center)}
                     setZoomLevel={(level) => setMapZoomLevel(level)}
                 />
                 <FinylSearchResultCard
-                    isSearchCard={isSearchCard}
                     setSelectedId={(selectedId?: string | undefined): void  => {
-                     setSelectId(selectedId)
+                        setSelectId(selectedId)
                     }}
-                    storeList={searchList}
                     setStoreList={(list) => setSearchList([...list])}
-                    setIsSearchCard={(isSearchCard) => setIsSearchCard(isSearchCard)}
                     setCenter={(center) => setCenter(center)}
                 />
                 <FinylMainCard selectedId={selectId} setSelectedId={setSelectId} />

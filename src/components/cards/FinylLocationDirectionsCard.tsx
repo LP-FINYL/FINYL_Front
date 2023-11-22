@@ -2,37 +2,46 @@
 import {NextPage} from "next";
 import {useRouter} from "next/navigation";
 import SearchBox from "@/components/searchBox/SearchBox";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import SummaryResultCard from "@/components/cards/SummaryResultCard";
 import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Select} from "@chakra-ui/react";
 import {Icon} from "@chakra-ui/icons";
 import {IoArrowBack, IoSearch} from "react-icons/io5";
 import {changeCityName, locations, locationType} from "@/static/locations/locations";
+import {SearchContext} from "@/context/SearchProvider";
 
 interface props {
     currentLocation: string
     selectedId?: string
     setSelectedId: (selectedId?: string) => void
     storeList: Array<storeInfoType>
-    setIsSearchCard?: (isSearchCard: boolean) => void
     setCenter?: (center: { lat: number, lng: number }) => void
     setZoomLevel?: (level: number) => void
 }
 
 const initStyle: string = 'absolute z-10 left-20 top-0 h-[100vh] w-[296px] bg-white'
 
-const FinylLocationDirectionsCard: NextPage<props> = ({storeList, currentLocation, selectedId, setSelectedId, setIsSearchCard, setCenter, setZoomLevel}) => {
+const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selectedId, setSelectedId, setCenter, setZoomLevel}) => {
     const router = useRouter()
     const [location, setLocation] = useState<string>("서울")
-    const [subLocation, setSubLocation] = useState<string>("전체")
+    const [subLocation, setSubLocation] = useState<string>("마포구")
+    const {setSearchData, searchList, isSearchNow, setIsSearchNow, setIsSearchOpen} = useContext(SearchContext)
 
     useEffect(() => {
         if(currentLocation){
             const tmp = currentLocation.split(" ")
             setLocation(changeCityName(tmp[0]))
-            setSubLocation(tmp[1])
+            if(subLocation !== '전체'){
+                setSubLocation(tmp[1])
+            }
         }
     }, [currentLocation]);
+
+    useEffect(() => {
+        if(locations && subLocation){
+            setSearchData && setSearchData('address', `${location}${subLocation === '전체' ? "" : ` ${subLocation}`}`)
+        }
+    }, [location, subLocation]);
 
     const changeCenter = (city: string, county: string) => {
         setCenter && setCenter(locations[city][county])
@@ -91,7 +100,7 @@ const FinylLocationDirectionsCard: NextPage<props> = ({storeList, currentLocatio
                     </Breadcrumb>
                 </div>
                 <div className={'w-6 h-6 cursor-pointer'} onClick={() => {
-                    setIsSearchCard && setIsSearchCard(true)
+                    setIsSearchOpen && setIsSearchOpen(true)
                     setSelectedId(undefined)
                 }}>
                     <Icon as={IoSearch} boxSize={6} />
@@ -100,7 +109,7 @@ const FinylLocationDirectionsCard: NextPage<props> = ({storeList, currentLocatio
         </div>
         <div className={'flex flex-col h-[88%] gap-[18px] overflow-y-auto items-center'}>
             {
-                storeList.map(store => {
+                searchList.map(store => {
                     return <SummaryResultCard
                         key={store.id}
                         store={store}

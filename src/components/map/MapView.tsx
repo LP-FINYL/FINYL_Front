@@ -1,9 +1,10 @@
 "use client"
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {NextPage} from "next";
 import {noAuthFetch} from "@/api/api";
 import {Map, MapMarker} from "react-kakao-maps-sdk";
 import Script from "next/script";
+import {SearchContext} from "@/context/SearchProvider";
 
 const KAKAO_SDK_URL = `//dapi.kakao.com/v2/maps/sdk.js?appkey=040ca9bab6805a5dc1355dd4141d7490&autoload=false&libraries=services`;
 
@@ -22,20 +23,15 @@ interface props {
     zoomLevel: number
 }
 
-const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelectedId, setCurrentLocation, centerCoords, zoomLevel}) => {
+const MapView:NextPage<props> = ({selectedId, setSelectedId, setCurrentLocation, centerCoords, zoomLevel}) => {
     const [center, setCenter] = useState<{lat: number, lng: number}>(centerCoords)
+    const {isSearchNow, searchList, coords, setCoords} = useContext(SearchContext)
 
     useEffect(() => {
         if(centerCoords){
             setCenter(centerCoords)
         }
     }, [centerCoords]);
-
-    const getLocationDirections = async (SWlatitude: number, SWlongitude: number, NElatitude: number, NElongitude: number) => {
-        const locations = await noAuthFetch(`locationDirections?SWlatitude=${SWlatitude}&SWlongitude=${SWlongitude}&NElatitude=${NElatitude}&NElongitude=${NElongitude}`, 'GET')
-
-        setStoreList(locations)
-    }
 
     useEffect(() => {
         window.kakao.maps.load(() => {
@@ -74,11 +70,18 @@ const MapView:NextPage<props> = ({storeList, setStoreList, selectedId, setSelect
 
                     setCenter({lat: map.getCenter().getLat(), lng: map.getCenter().getLng()})
 
-                    getLocationDirections(sw.getLat(), sw.getLng(), ne.getLat(), ne.getLng())
+                    if(!isSearchNow) {
+                        setCoords && setCoords({
+                            SWlat: sw.getLat(),
+                            SWlng: sw.getLng(),
+                            NElat: ne.getLat(),
+                            NElng: ne.getLng()
+                        })
+                    }
                 }}
             >
                 {
-                    storeList.map(store => {
+                    searchList.map(store => {
                         if(store.longitude && store.latitude){
                             return <MapMarker
                                 key={store.id}

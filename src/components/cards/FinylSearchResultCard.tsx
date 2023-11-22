@@ -2,39 +2,42 @@
 import {NextPage} from "next";
 import {useRouter} from "next/navigation";
 import SearchBox from "@/components/searchBox/SearchBox";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {IconButton, Skeleton, SkeletonText} from "@chakra-ui/react";
 import {IoArrowBack, IoClose, IoSearch} from "react-icons/io5";
 import ResultItem from "@/components/ResultItem";
 import {noAuthFetch} from "@/api/api";
 import {Icon} from "@chakra-ui/icons";
+import {SearchContext} from "@/context/SearchProvider";
 
 interface props {
     selectedId?: string
     setSelectedId: (selectedId?: string) => void
-    storeList: Array<storeInfoType>
-    isSearchCard?: boolean
-    setIsSearchCard?: (isSearchCard: boolean) => void
     setStoreList?: (storeList: Array<storeInfoType>) => void
     setCenter?: (center: {lat: number, lng: number}) => void
 }
 
 const initStyle: string = 'absolute z-20 left-0 bottom-0 h-screen w-[296px] bg-white border-r border-black/50-200'
 
-const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, isSearchCard, storeList, setStoreList, setIsSearchCard, setCenter}) => {
+const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setCenter}) => {
     const [isSearch, setIsSearch] = useState<boolean>(false)
-    const [keyword, setKeyword] = useState<string>("")
-    const [searchKeyword, setSearchKeyword] = useState<string>("")
+    const [inputKeyword, setInputKeyword] = useState<string>("")
+    const {
+        keyword,
+        setSearchData,
+        searchList,
+        setIsSearchNow,
+        isSearchOpen,
+        setIsSearchOpen
+    } = useContext(SearchContext)
 
     const searchStore = async () => {
-        const results = await noAuthFetch(`search?keyword=${keyword}`, 'GET')
+        setSearchData && setSearchData('keyword', inputKeyword)
 
         setIsSearch(true)
-        setSearchKeyword(keyword)
-        setStoreList && setStoreList([...results])
     }
 
-    return <div className={`absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50${!isSearchCard ? " hidden" : ""}`}>
+    return <div className={`absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50${!isSearchOpen ? " hidden" : ""}`}>
         <div className={`${initStyle} px-[21px] pt-12`}>
             <div>
                 <div className={'w-full h-[140px]'}>
@@ -49,42 +52,40 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, isSe
                         </div>
                         <div className={'w-6 h-6 cursor-pointer'} onClick={() => {
                             setIsSearch(false)
-                            setSearchKeyword('')
-                            setKeyword('')
-                            setStoreList && setStoreList([])
-                            setIsSearchCard && setIsSearchCard(false)
+                            setInputKeyword('')
+                            setSearchData && setSearchData('keyword', undefined)
+                            setIsSearchOpen && setIsSearchOpen(false)
                             setSelectedId(undefined)
                         }}>
                             <Icon as={IoArrowBack} boxSize={6} />
                         </div>
                     </div>
                     <SearchBox
-                        keyword={keyword}
-                        setKeyword={setKeyword}
+                        keyword={inputKeyword}
+                        setKeyword={setInputKeyword}
                         placeholder={'레코드샵 이름 검색'}
                         onSearchEvent={() => searchStore()}
                         isSearch={isSearch}
                         searchClearEvent={() => {
                             setIsSearch(false)
-                            setSearchKeyword('')
-                            setKeyword('')
-                            setStoreList && setStoreList([])
+                            setInputKeyword('')
+                            setSearchData && setSearchData('keyword', undefined)
                         }}
                     />
                     {
                         isSearch && <>
                             <div className={'flex flex-col gap-[3px] pt-9'}>
                                 <p className={'font-inter text-gray-900 text-xl font-bold'}>
-                                    {`'${searchKeyword}' 에 대한 검색 결과`}
+                                    {`'${keyword}' 에 대한 검색 결과`}
                                 </p>
                                 <p className={'font-inter text-slate-500 text-sm font-normal leading-tight'}>
-                                    {storeList.length ? `${storeList.length}개 결과` : '검색 결과가 없습니다.'}
+                                    {searchList.length ? `${searchList.length}개 결과` : '검색 결과가 없습니다.'}
                                 </p>
                             </div>
                             {
-                                storeList.length ? <div className={'py-3'}>
+                                searchList.length ? <div className={'py-3'}>
                                     {
-                                        storeList.map(store => {
+                                        searchList.map(store => {
                                             return <ResultItem
                                                 key={store.id}
                                                 store={store}
