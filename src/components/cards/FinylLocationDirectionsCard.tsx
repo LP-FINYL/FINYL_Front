@@ -1,10 +1,9 @@
 "use client"
 import {NextPage} from "next";
 import {useRouter} from "next/navigation";
-import SearchBox from "@/components/searchBox/SearchBox";
 import {useContext, useEffect, useState} from "react";
 import SummaryResultCard from "@/components/cards/SummaryResultCard";
-import {Breadcrumb, BreadcrumbItem, BreadcrumbLink, Button, Select} from "@chakra-ui/react";
+import {Breadcrumb, BreadcrumbItem, Select} from "@chakra-ui/react";
 import {Icon} from "@chakra-ui/icons";
 import {IoArrowBack, IoSearch} from "react-icons/io5";
 import {changeCityName, locations, locationType} from "@/static/locations/locations";
@@ -58,6 +57,7 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
                     <Breadcrumb>
                         <BreadcrumbItem>
                             <Select
+                                className={'w-7 p-0'}
                                 size={'xs'}
                                 variant='unstyled'
                                 value={location}
@@ -67,6 +67,7 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
 
                                     changeCenter(e.target.value, "전체")
                                 }}
+                                iconSize={'0'}
                             >
                                 {
                                     Object.keys(locations).map((location, index) => {
@@ -87,6 +88,7 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
 
                                             changeCenter(location, e.target.value)
                                         }}
+                                        iconSize={'0'}
                                     >
                                         {
                                             Object.keys(locations[location]).map((location) => {

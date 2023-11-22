@@ -17,7 +17,7 @@ const ResultItem: NextPage<props> = ({store, onClick}) => {
         return `${addressList[0]}${addressList[1] ? ` ${addressList[1]}` : ""}`
     }
 
-    return <div className={'flex justify-between border-y border-gray-200 w-full py-3 cursor-pointer'} onClick={onClick}>
+    return <div className={'flex justify-between border-b border-gray-200 w-full py-3 cursor-pointer'} onClick={onClick}>
         <div className={'relative w-[78px] h-[78px]'} >
             <Image
                 src={store.image ?? 'https://lh3.googleusercontent.com/p/AF1QipNziqUN_0xcqb5iKZw1wXZs9TbaJM0eaXbaA_3c=s680-w680-h510'}

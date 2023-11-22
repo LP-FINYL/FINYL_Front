@@ -25,7 +25,7 @@ interface props {
 
 const MapView:NextPage<props> = ({selectedId, setSelectedId, setCurrentLocation, centerCoords, zoomLevel}) => {
     const [center, setCenter] = useState<{lat: number, lng: number}>(centerCoords)
-    const {isSearchNow, searchList, coords, setCoords} = useContext(SearchContext)
+    const {isSearchNow, searchList, coords, setCoords, isSearchOpen} = useContext(SearchContext)
 
     useEffect(() => {
         if(centerCoords){
@@ -65,18 +65,20 @@ const MapView:NextPage<props> = ({selectedId, setSelectedId, setCurrentLocation,
                 center={center}
                 style={{ width: '100%', height: '100%' }}
                 onTileLoaded={(map) => {
-                    const sw = map.getBounds().getSouthWest()
-                    const ne = map.getBounds().getNorthEast()
+                    if(!isSearchOpen) {
+                        const sw = map.getBounds().getSouthWest()
+                        const ne = map.getBounds().getNorthEast()
 
-                    setCenter({lat: map.getCenter().getLat(), lng: map.getCenter().getLng()})
+                        setCenter({lat: map.getCenter().getLat(), lng: map.getCenter().getLng()})
 
-                    if(!isSearchNow) {
-                        setCoords && setCoords({
-                            SWlat: sw.getLat(),
-                            SWlng: sw.getLng(),
-                            NElat: ne.getLat(),
-                            NElng: ne.getLng()
-                        })
+                        if(!isSearchNow) {
+                            setCoords && setCoords({
+                                SWlat: sw.getLat(),
+                                SWlng: sw.getLng(),
+                                NElat: ne.getLat(),
+                                NElng: ne.getLng()
+                            })
+                        }
                     }
                 }}
             >

@@ -38,10 +38,10 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
     }
 
     return <div className={`absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50${!isSearchOpen ? " hidden" : ""}`}>
-        <div className={`${initStyle} px-[21px] pt-12`}>
+        <div className={`${initStyle} pt-12`}>
             <div>
                 <div className={'w-full h-[140px]'}>
-                    <div className={'flex justify-between items-center mb-[18px] pb-[18px] border-b border-gray-200'}>
+                    <div className={'flex justify-between items-center mb-[18px] px-[21px]'}>
                         <div>
                             <p className={'text-gray-900 text-xl font-bold font-inter leading-normal'}>
                                 레코드샵 검색
@@ -60,21 +60,24 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                             <Icon as={IoArrowBack} boxSize={6} />
                         </div>
                     </div>
-                    <SearchBox
-                        keyword={inputKeyword}
-                        setKeyword={setInputKeyword}
-                        placeholder={'레코드샵 이름 검색'}
-                        onSearchEvent={() => searchStore()}
-                        isSearch={isSearch}
-                        searchClearEvent={() => {
-                            setIsSearch(false)
-                            setInputKeyword('')
-                            setSearchData && setSearchData('keyword', undefined)
-                        }}
-                    />
+                    <div className={'mx-[21px] border-t border-gray-200 pb-[18px]'} />
+                    <div className={'px-[21px]'}>
+                        <SearchBox
+                            keyword={inputKeyword}
+                            setKeyword={setInputKeyword}
+                            placeholder={'레코드샵 이름 검색'}
+                            onSearchEvent={() => searchStore()}
+                            isSearch={isSearch}
+                            searchClearEvent={() => {
+                                setIsSearch(false)
+                                setInputKeyword('')
+                                setSearchData && setSearchData('keyword', undefined)
+                            }}
+                        />
+                    </div>
                     {
                         isSearch && <>
-                            <div className={'flex flex-col gap-[3px] pt-9'}>
+                            <div className={'flex flex-col gap-[3px] pt-9 px-[21px] pb-3'}>
                                 <p className={'font-inter text-gray-900 text-xl font-bold'}>
                                     {`'${keyword}' 에 대한 검색 결과`}
                                 </p>
@@ -82,8 +85,10 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                                     {searchList.length ? `${searchList.length}개 결과` : '검색 결과가 없습니다.'}
                                 </p>
                             </div>
+                            <div className={'flex flex-col h-[70vh] gap-[18px] overflow-y-auto items-center'}>
                             {
-                                searchList.length ? <div className={'py-3'}>
+                                searchList.length ? <div className={'pb-3'}>
+                                    <div className={'border-gray-200 border-t'} />
                                     {
                                         searchList.map(store => {
                                             return <ResultItem
@@ -104,11 +109,12 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                                     }
                                 </div> : <></>
                             }
+                            </div>
                         </>
                     }
                     {
                         !isSearch && <>
-                            <div className={'flex flex-col gap-[3px] pt-9'}>
+                            <div className={'flex flex-col gap-[3px] pt-9 px-[21px]'}>
                                 <p className={'font-inter text-slate-500 text-sm font-normal leading-tight'}>
                                     검색을 원하시는 레코드샵 이름을 입력해 주세요.
                                 </p>
