@@ -18,6 +18,7 @@ import {adminFetch, formDataFetch} from "@/api/api";
 import {useRouter} from "next/navigation"
 import Image from "next/image";
 import {checkToken} from "@/components/Functions/useFunctions";
+import {Tag} from "@chakra-ui/react";
 
 interface OTType {
     day: string
@@ -39,6 +40,8 @@ interface cardType {
     operatorTime?: Array<OTType>
 }
 
+const tagsItems = ['신품 바이닐', '중고 바이닐', 'LP 바']
+
 const Home = () => {
     const fileRef = useRef<HTMLInputElement>(null);
     const router = useRouter()
@@ -47,6 +50,7 @@ const Home = () => {
     })
     const [operatorTime, setOperatorTime] = useState<Array<OTType>>([])
     const [inputOTData, setInputOTData] = useState<OTType>({day: '', time: ''})
+    const [tagAllowList, setTagAllowList] = useState<Array<boolean>>([false, false, false])
 
     useEffect(() => {
         if(!checkToken()){
@@ -64,6 +68,7 @@ const Home = () => {
     const postAdminCreate = async () => {
         const result = await adminFetch('adminCreate', "POST", {
             ...insertData,
+            tags: changeTagsListToString(tagAllowList),
             operatorTime: JSON.stringify(operatorTime)
         })
 
@@ -99,6 +104,19 @@ const Home = () => {
         formData.append('file', file)
 
         postImageUpload(formData)
+    }
+
+    const changeBooleanValue = (list: Array<boolean>, index: number) => {
+        let tmpList = list
+        tmpList[index] = !tmpList[index]
+        return tmpList
+    }
+
+    const changeTagsListToString = (allowIndex: Array<boolean>) => {
+        const result = allowIndex.map((allow, index) => allow ? tagsItems[index] : undefined).filter(v => v)
+
+        console.log(result.join(', '))
+        return result.join(', ')
     }
 
     return (
@@ -165,15 +183,40 @@ const Home = () => {
                     />
                 </div>
                 <Spacer y={4} />
-                <Input
-                    label={'태그'}
-                    labelPlacement={'outside'}
-                    placeholder={'태그를 입력해주세요.'}
-                    value={insertData.tags}
-                    onChange={(v) => {
-                        setInsertDataKey('tags', v.target.value)
-                    }}
-                />
+                <div>
+                    <p className={'font-inter font-normal text-sm'}>
+                        태그
+                    </p>
+                    <div className={'flex gap-3 mt-3'}>
+                        <Tag
+                            size={'lg'}
+                            className={`cursor-pointer ${tagAllowList[0] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}
+                            onClick={() => {
+                                setTagAllowList([...changeBooleanValue(tagAllowList, 0)])
+                            }}
+                        >
+                            신품 바이닐
+                        </Tag>
+                        <Tag
+                            size={'lg'}
+                            className={`cursor-pointer ${tagAllowList[1] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}
+                            onClick={() => {
+                                setTagAllowList([...changeBooleanValue(tagAllowList, 1)])
+                            }}
+                        >
+                            중고 바이닐
+                        </Tag>
+                        <Tag
+                            size={'lg'}
+                            className={`cursor-pointer ${tagAllowList[2] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}
+                            onClick={() => {
+                                setTagAllowList([...changeBooleanValue(tagAllowList, 2)])
+                            }}
+                        >
+                            LP 바
+                        </Tag>
+                    </div>
+                </div>
                 <Spacer y={4} />
                 <Input
                     label={'사이트'}
