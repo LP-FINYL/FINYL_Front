@@ -37,6 +37,7 @@ const Home = () => {
                     }}
                     setStoreList={(list) => setSearchList([...list])}
                     setCenter={(center) => setCenter(center)}
+                    setZoomLevel={(level) => setMapZoomLevel(level)}
                 />
                 <FinylMainCard selectedId={selectId} setSelectedId={setSelectId} />
             </div>

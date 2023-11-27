@@ -8,6 +8,7 @@ import {Icon} from "@chakra-ui/icons";
 import {IoArrowBack, IoSearch} from "react-icons/io5";
 import {changeCityName, locations, locationType} from "@/static/locations/locations";
 import {SearchContext} from "@/context/SearchProvider";
+import {LocationBreadcrumb} from "@/components/Breadcrumb/LocationBreadcrumb";
 
 interface props {
     currentLocation: string
@@ -44,7 +45,7 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
 
     const changeCenter = (city: string, county: string) => {
         setCenter && setCenter(locations[city][county])
-        setZoomLevel && setZoomLevel(county === '전체' ? 9 : 6)
+        setZoomLevel && setZoomLevel(city === '전체' ? 12 : county === '전체' ? 9 : 6)
     }
 
     return <div className={`${initStyle} pt-12 `}>
@@ -54,52 +55,56 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
                     <p className={'text-gray-900 text-xl font-bold font-inter leading-normal'}>
                         현재 지역의 레코드샵
                     </p>
-                    <Breadcrumb>
-                        <BreadcrumbItem>
-                            <Select
-                                className={'w-7 p-0'}
-                                size={'xs'}
-                                variant='unstyled'
-                                value={location}
-                                onChange={(e) => {
-                                    setLocation(e.target.value)
-                                    setSubLocation("전체")
+                    <LocationBreadcrumb
+                        country={location}
+                        city={subLocation}
+                    />
+                    {/*<Breadcrumb>*/}
+                    {/*    <BreadcrumbItem>*/}
+                    {/*        <Select*/}
+                    {/*            className={'w-7 p-0'}*/}
+                    {/*            size={'xs'}*/}
+                    {/*            variant='unstyled'*/}
+                    {/*            value={location}*/}
+                    {/*            onChange={(e) => {*/}
+                    {/*                setLocation(e.target.value)*/}
+                    {/*                setSubLocation("전체")*/}
 
-                                    changeCenter(e.target.value, "전체")
-                                }}
-                                iconSize={'0'}
-                            >
-                                {
-                                    Object.keys(locations).map((location, index) => {
-                                        return <option key={location} value={location}>{location}</option>
-                                    })
-                                }
-                            </Select>
-                        </BreadcrumbItem>
-                        {
-                            locations[location] ?
-                                <BreadcrumbItem>
-                                    <Select
-                                        size={'xs'}
-                                        variant='unstyled'
-                                        value={subLocation}
-                                        onChange={(e) => {
-                                            setSubLocation(e.target.value)
+                    {/*                changeCenter(e.target.value, "전체")*/}
+                    {/*            }}*/}
+                    {/*            iconSize={'0'}*/}
+                    {/*        >*/}
+                    {/*            {*/}
+                    {/*                Object.keys(locations).map((location, index) => {*/}
+                    {/*                    return <option key={location} value={location}>{location}</option>*/}
+                    {/*                })*/}
+                    {/*            }*/}
+                    {/*        </Select>*/}
+                    {/*    </BreadcrumbItem>*/}
+                    {/*    {*/}
+                    {/*        locations[location] ?*/}
+                    {/*            <BreadcrumbItem>*/}
+                    {/*                <Select*/}
+                    {/*                    size={'xs'}*/}
+                    {/*                    variant='unstyled'*/}
+                    {/*                    value={subLocation}*/}
+                    {/*                    onChange={(e) => {*/}
+                    {/*                        setSubLocation(e.target.value)*/}
 
-                                            changeCenter(location, e.target.value)
-                                        }}
-                                        iconSize={'0'}
-                                    >
-                                        {
-                                            Object.keys(locations[location]).map((location) => {
-                                                return <option key={location} value={location}>{location}</option>
-                                            })
-                                        }
-                                    </Select>
-                                </BreadcrumbItem>
-                                : undefined
-                        }
-                    </Breadcrumb>
+                    {/*                        changeCenter(location, e.target.value)*/}
+                    {/*                    }}*/}
+                    {/*                    iconSize={'0'}*/}
+                    {/*                >*/}
+                    {/*                    {*/}
+                    {/*                        Object.keys(locations[location]).map((location) => {*/}
+                    {/*                            return <option key={location} value={location}>{location}</option>*/}
+                    {/*                        })*/}
+                    {/*                    }*/}
+                    {/*                </Select>*/}
+                    {/*            </BreadcrumbItem>*/}
+                    {/*            : undefined*/}
+                    {/*    }*/}
+                    {/*</Breadcrumb>*/}
                 </div>
                 <div className={'w-6 h-6 cursor-pointer'} onClick={() => {
                     setIsSearchOpen && setIsSearchOpen(true)

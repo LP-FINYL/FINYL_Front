@@ -1,26 +1,30 @@
 "use client"
 import {NextPage} from "next";
-import {useRouter} from "next/navigation";
 import SearchBox from "@/components/searchBox/SearchBox";
-import {useContext, useState} from "react";
-import {IconButton, Skeleton, SkeletonText} from "@chakra-ui/react";
-import {IoArrowBack, IoClose, IoSearch} from "react-icons/io5";
+import {useContext, useEffect, useState} from "react";
+import {Skeleton, SkeletonText, Tag, TagCloseButton} from "@chakra-ui/react";
+import {IoArrowBack, IoChevronUp} from "react-icons/io5";
 import ResultItem from "@/components/ResultItem";
-import {noAuthFetch} from "@/api/api";
 import {Icon} from "@chakra-ui/icons";
 import {SearchContext} from "@/context/SearchProvider";
+import {LocationBreadcrumb} from "@/components/Breadcrumb/LocationBreadcrumb";
+import {locations} from "@/static/locations/locations";
 
 interface props {
     selectedId?: string
     setSelectedId: (selectedId?: string) => void
     setStoreList?: (storeList: Array<storeInfoType>) => void
     setCenter?: (center: {lat: number, lng: number}) => void
+    setZoomLevel?: (level: number) => void
 }
 
 const initStyle: string = 'absolute z-20 left-0 bottom-0 h-screen w-[296px] bg-white border-r border-black/50-200'
 
-const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setCenter}) => {
+const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setCenter, setZoomLevel}) => {
     const [isSearch, setIsSearch] = useState<boolean>(false)
+    const [country, setCountry] = useState('서울')
+    const [city, setCity] = useState('마포구')
+    const [searchLocationIndex, setSearchLocationIndex] = useState<number | undefined>(undefined)
     const [inputKeyword, setInputKeyword] = useState<string>("")
     const {
         keyword,
@@ -35,6 +39,11 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
         setSearchData && setSearchData('keyword', inputKeyword)
 
         setIsSearch(true)
+    }
+
+    const changeCenter = (county: string, city: string) => {
+        setCenter && setCenter(locations[county][city])
+        setZoomLevel && setZoomLevel(county === '전체' ? 12 : city === '전체' ? 9 : 6)
     }
 
     return <div className={`absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50${!isSearchOpen ? " hidden" : ""}`}>
@@ -59,6 +68,78 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                         }}>
                             <Icon as={IoArrowBack} boxSize={6} />
                         </div>
+                    </div>
+                    <div className={'flex mt-9 mb-[18px] px-[21px] justify-between items-center'}>
+                        <div>
+                            <p className={'font-inter text-gray-900 text-base font-bold leading-normal'}>지역 선택</p>
+                            <LocationBreadcrumb
+                                isSearch
+                                country={country}
+                                city={city}
+                                setFocusIndex={index => setSearchLocationIndex(index)}
+                            />
+                        </div>
+                        {
+                            searchLocationIndex || searchLocationIndex === 0 ? <Icon
+                                as={IoChevronUp}
+                                className={'cursor-pointer'}
+                                onClick={() => {
+                                    setSearchLocationIndex(undefined)
+                                }}
+                            /> : <div></div>
+                        }
+                    </div>
+                    <div className={'px-[21px]'}>
+                        {
+                            searchLocationIndex || searchLocationIndex === 0 ? <div className={'my-[18px]'}>
+                                <Tag size={'sm'}>
+                                    <p className={'font-inter text-gray-900 text-xs font-bold leading-none'}>
+                                        {
+                                            searchLocationIndex === 0 ? country : undefined
+                                        }
+                                        {
+                                            searchLocationIndex === 1 ? city : undefined
+                                        }
+                                    </p>
+                                    <TagCloseButton />
+                                </Tag>
+                                <div className={'mt-[18px] flex gap-2 flex-wrap'}>
+                                    {
+                                        Object.keys(searchLocationIndex === 0 ? locations : locations[country]).map(location => {
+                                            return <Tag
+                                                key={location}
+                                                size={'sm'}
+                                                className={'cursor-pointer'}
+                                                onClick={() => {
+                                                    let tmpCountry = country
+                                                    let tmpCity = city
+                                                    if(searchLocationIndex === 0){
+                                                        tmpCountry = location
+                                                        tmpCity = "전체"
+                                                    }
+
+                                                    if(searchLocationIndex === 1){
+                                                        tmpCity = location
+                                                    }
+
+                                                    setCountry(tmpCountry)
+                                                    setCity(tmpCity)
+
+                                                    console.log(tmpCountry, tmpCity)
+                                                    if(tmpCountry !== "전체") {
+                                                        console.log('검색')
+                                                        setSearchData && setSearchData('address', `${tmpCountry}${tmpCity !== "전체" ? `${tmpCity}` : ""}`)
+                                                    }
+                                                    changeCenter(tmpCountry, tmpCity)
+                                                }}
+                                            >
+                                                <p className={'font-inter text-gray-900 text-xs font-medium leading-none'}>{location}</p>
+                                            </Tag>
+                                        })
+                                    }
+                                </div>
+                            </div> : <></>
+                        }
                     </div>
                     <div className={'mx-[21px] border-t border-gray-200 pb-[18px]'} />
                     <div className={'px-[21px]'}>

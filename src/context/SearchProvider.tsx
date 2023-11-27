@@ -45,7 +45,7 @@ const SearchProvider: NextPage<IProps> = ({children}) => {
 
     useEffect(() => {
         if(isSearchOpen){
-            if(search && search.keyword){
+            if(search){
                 getSearchResultList()
             }else{
                 setSearchList([])

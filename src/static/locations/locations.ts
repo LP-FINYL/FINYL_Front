@@ -12,6 +12,12 @@ interface location {
 }
 
 const locations: locationType = {
+    "전체": {
+        "전체": {
+            lat: 37.27538,
+            lng: 127.05488
+        }
+    },
     "서울": {
         "전체": {
             lat: 37.56661,
