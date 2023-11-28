@@ -18,10 +18,10 @@ interface props {
     setZoomLevel?: (level: number) => void
 }
 
-const initStyle: string = 'absolute z-20 left-0 bottom-0 h-screen w-[296px] bg-white border-r border-black/50-200'
+const initStyle: string = 'absolute z-20 left-0 bottom-0 h-screen w-[306px] bg-white border-r border-black/50-200'
 
 const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setCenter, setZoomLevel}) => {
-    const [isSearch, setIsSearch] = useState<boolean>(false)
+    const [isSearch, setIsSearch] = useState<boolean>(true)
     const [country, setCountry] = useState('서울')
     const [city, setCity] = useState('마포구')
     const [searchLocationIndex, setSearchLocationIndex] = useState<number | undefined>(undefined)
@@ -30,15 +30,12 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
         keyword,
         setSearchData,
         searchList,
-        setIsSearchNow,
         isSearchOpen,
         setIsSearchOpen
     } = useContext(SearchContext)
 
     const searchStore = async () => {
         setSearchData && setSearchData('keyword', inputKeyword)
-
-        setIsSearch(true)
     }
 
     const changeCenter = (county: string, city: string) => {
@@ -46,7 +43,7 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
         setZoomLevel && setZoomLevel(county === '전체' ? 12 : city === '전체' ? 9 : 6)
     }
 
-    return <div className={`absolute z-10 left-20 top-0 h-screen w-[296px] bg-black/50${!isSearchOpen ? " hidden" : ""}`}>
+    return <div className={`absolute z-10 left-20 top-0 h-screen w-[306px] overflow-y-auto bg-white${!isSearchOpen ? " hidden" : ""}`}>
         <div className={`${initStyle} pt-12`}>
             <div>
                 <div className={'w-full h-[140px]'}>
@@ -101,7 +98,20 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                                             searchLocationIndex === 1 ? city : undefined
                                         }
                                     </p>
-                                    <TagCloseButton />
+                                    <TagCloseButton onClick={() => {
+                                        let addressKeyword = ''
+                                        if(searchLocationIndex === 0) {
+                                            setCountry("전체")
+                                            changeCenter('전체', '전체')
+                                        }
+                                        if(searchLocationIndex === 1) {
+                                            setCity("전체")
+                                            changeCenter(country, '전체')
+                                            addressKeyword = country
+                                        }
+
+                                        setSearchData && setSearchData('address', addressKeyword)
+                                    }} />
                                 </Tag>
                                 <div className={'mt-[18px] flex gap-2 flex-wrap'}>
                                     {
@@ -124,12 +134,7 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
 
                                                     setCountry(tmpCountry)
                                                     setCity(tmpCity)
-
-                                                    console.log(tmpCountry, tmpCity)
-                                                    if(tmpCountry !== "전체") {
-                                                        console.log('검색')
-                                                        setSearchData && setSearchData('address', `${tmpCountry}${tmpCity !== "전체" ? `${tmpCity}` : ""}`)
-                                                    }
+                                                    setSearchData && setSearchData('address', `${tmpCountry !== "전체" ? `${tmpCountry}` : ""}${tmpCity !== "전체" ? ` ${tmpCity}` : ""}`)
                                                     changeCenter(tmpCountry, tmpCity)
                                                 }}
                                             >
@@ -150,7 +155,6 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                             onSearchEvent={() => searchStore()}
                             isSearch={isSearch}
                             searchClearEvent={() => {
-                                setIsSearch(false)
                                 setInputKeyword('')
                                 setSearchData && setSearchData('keyword', undefined)
                             }}
@@ -160,13 +164,13 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                         isSearch && <>
                             <div className={'flex flex-col gap-[3px] pt-9 px-[21px] pb-3'}>
                                 <p className={'font-inter text-gray-900 text-xl font-bold'}>
-                                    {`'${keyword}' 에 대한 검색 결과`}
+                                    {`'${keyword ?? ''}' 에 대한 검색 결과`}
                                 </p>
                                 <p className={'font-inter text-slate-500 text-sm font-normal leading-tight'}>
                                     {searchList.length ? `${searchList.length}개 결과` : '검색 결과가 없습니다.'}
                                 </p>
                             </div>
-                            <div className={'flex flex-col h-[70vh] gap-[18px] overflow-y-auto items-center'}>
+                            <div className={'flex flex-col gap-[18px] items-center'}>
                             {
                                 searchList.length ? <div className={'pb-3'}>
                                     <div className={'border-gray-200 border-t'} />

@@ -25,7 +25,12 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
     const router = useRouter()
     const [location, setLocation] = useState<string>("서울")
     const [subLocation, setSubLocation] = useState<string>("마포구")
-    const {setSearchData, searchList, isSearchNow, setIsSearchNow, setIsSearchOpen} = useContext(SearchContext)
+    const {
+        setSearchData,
+        searchList,
+        isSearchOpen,
+        setIsSearchOpen
+    } = useContext(SearchContext)
 
     useEffect(() => {
         if(currentLocation){
@@ -36,17 +41,6 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
             }
         }
     }, [currentLocation]);
-
-    useEffect(() => {
-        if(locations && subLocation){
-            setSearchData && setSearchData('address', `${location}${subLocation === '전체' ? "" : ` ${subLocation}`}`)
-        }
-    }, [location, subLocation]);
-
-    const changeCenter = (city: string, county: string) => {
-        setCenter && setCenter(locations[city][county])
-        setZoomLevel && setZoomLevel(city === '전체' ? 12 : county === '전체' ? 9 : 6)
-    }
 
     return <div className={`${initStyle} pt-12 `}>
         <div className={'w-full px-[21px]'}>
@@ -59,52 +53,6 @@ const FinylLocationDirectionsCard: NextPage<props> = ({currentLocation, selected
                         country={location}
                         city={subLocation}
                     />
-                    {/*<Breadcrumb>*/}
-                    {/*    <BreadcrumbItem>*/}
-                    {/*        <Select*/}
-                    {/*            className={'w-7 p-0'}*/}
-                    {/*            size={'xs'}*/}
-                    {/*            variant='unstyled'*/}
-                    {/*            value={location}*/}
-                    {/*            onChange={(e) => {*/}
-                    {/*                setLocation(e.target.value)*/}
-                    {/*                setSubLocation("전체")*/}
-
-                    {/*                changeCenter(e.target.value, "전체")*/}
-                    {/*            }}*/}
-                    {/*            iconSize={'0'}*/}
-                    {/*        >*/}
-                    {/*            {*/}
-                    {/*                Object.keys(locations).map((location, index) => {*/}
-                    {/*                    return <option key={location} value={location}>{location}</option>*/}
-                    {/*                })*/}
-                    {/*            }*/}
-                    {/*        </Select>*/}
-                    {/*    </BreadcrumbItem>*/}
-                    {/*    {*/}
-                    {/*        locations[location] ?*/}
-                    {/*            <BreadcrumbItem>*/}
-                    {/*                <Select*/}
-                    {/*                    size={'xs'}*/}
-                    {/*                    variant='unstyled'*/}
-                    {/*                    value={subLocation}*/}
-                    {/*                    onChange={(e) => {*/}
-                    {/*                        setSubLocation(e.target.value)*/}
-
-                    {/*                        changeCenter(location, e.target.value)*/}
-                    {/*                    }}*/}
-                    {/*                    iconSize={'0'}*/}
-                    {/*                >*/}
-                    {/*                    {*/}
-                    {/*                        Object.keys(locations[location]).map((location) => {*/}
-                    {/*                            return <option key={location} value={location}>{location}</option>*/}
-                    {/*                        })*/}
-                    {/*                    }*/}
-                    {/*                </Select>*/}
-                    {/*            </BreadcrumbItem>*/}
-                    {/*            : undefined*/}
-                    {/*    }*/}
-                    {/*</Breadcrumb>*/}
                 </div>
                 <div className={'w-6 h-6 cursor-pointer'} onClick={() => {
                     setIsSearchOpen && setIsSearchOpen(true)

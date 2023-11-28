@@ -115,7 +115,6 @@ const Home = () => {
     const changeTagsListToString = (allowIndex: Array<boolean>) => {
         const result = allowIndex.map((allow, index) => allow ? tagsItems[index] : undefined).filter(v => v)
 
-        console.log(result.join(', '))
         return result.join(', ')
     }
 

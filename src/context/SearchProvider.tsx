@@ -44,6 +44,7 @@ const SearchProvider: NextPage<IProps> = ({children}) => {
     const [coords, setCoords] = useState<CoordsType | undefined>(undefined)
 
     useEffect(() => {
+        console.log('search', search)
         if(isSearchOpen){
             if(search){
                 getSearchResultList()
