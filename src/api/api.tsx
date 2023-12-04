@@ -1,6 +1,7 @@
 import {getCookie, setCookie} from 'cookies-next';
 
 export const FINYL_API = 'http://34.110.146.181/api/v1'
+export const SLACK_API = "http://34.36.48.60/api/v1/approval"
 
 type noAuthFetchType<T> = (api: string, method: 'GET' | 'POST', body?: any) => Promise<T>
 
@@ -50,9 +51,23 @@ const formDataFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
     return result
 }
 
+const slackFetch: noAuthFetchType<any> = async (api, method, body?: any) => {
+    let u = new URLSearchParams({...body})
+
+    const result = await fetch(`${SLACK_API}/${api}`, {
+        method: method, body: u,
+        headers: {
+            "Contents-Type":"application/x-www-form-urlencoded; charset=utf-8"
+        }
+    }).then(res => res.json()).then(data => data)
+
+    return result
+}
+
 export {
     noAuthFetch,
     adminFetch,
     authFetch,
-    formDataFetch
+    formDataFetch,
+    slackFetch
 }

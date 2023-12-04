@@ -3,7 +3,7 @@ import {useDaumPostcodePopup} from "react-daum-postcode";
 import {postcodeScriptUrl} from "react-daum-postcode/lib/loadPostcode";
 import {useEffect, useState} from "react";
 import {NextPage} from "next";
-import {Button} from "@nextui-org/react";
+import {Button} from "@chakra-ui/button";
 
 declare global {
     interface Window {
@@ -56,7 +56,9 @@ const DaumPost: NextPage<props> = ({setAddress}) => {
         //주소검색이 완료되고, 결과 주소를 클릭 시 해당 함수 수행
         open({onComplete: handleComplete});
     }
-    return <Button onClick={handleClick}>주소찾기</Button>
+    return <Button className={'font-inter text-slate-500 text-sm font-bold underline leading-tight justify-start'} variant={'link'} onClick={handleClick}>
+        주소 찾기
+    </Button>
 }
 
 export default DaumPost;

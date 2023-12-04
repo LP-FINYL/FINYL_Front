@@ -5,6 +5,7 @@ import MapView from "@/components/map/MapView";
 import SideTab from "@/components/sideTab/SideTab";
 import FinylSearchResultCard from "@/components/cards/FinylSearchResultCard";
 import FinylLocationDirectionsCard from "@/components/cards/FinylLocationDirectionsCard";
+import FinylStoreInfoInputCard from "@/components/cards/FinylStoreInfoInputCard";
 
 const Home = () => {
     const [searchList, setSearchList] = useState<Array<storeInfoType>>([])
@@ -39,7 +40,12 @@ const Home = () => {
                     setCenter={(center) => setCenter(center)}
                     setZoomLevel={(level) => setMapZoomLevel(level)}
                 />
-                <FinylMainCard selectedId={selectId} setSelectedId={setSelectId} />
+                <div className={'absolute z-10 top-0 left-[376px] h-screen bg-white'}>
+                    <div className={'flex'}>
+                        <FinylMainCard selectedId={selectId} setSelectedId={setSelectId} />
+                        <FinylStoreInfoInputCard />
+                    </div>
+                </div>
             </div>
             <div className={'h-full ml-[376px]'}>
                 <MapView

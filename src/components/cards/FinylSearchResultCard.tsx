@@ -2,13 +2,14 @@
 import {NextPage} from "next";
 import SearchBox from "@/components/searchBox/SearchBox";
 import {useContext, useEffect, useState} from "react";
-import {Skeleton, SkeletonText, Tag, TagCloseButton} from "@chakra-ui/react";
+import {Button, Skeleton, SkeletonText, Tag, TagCloseButton} from "@chakra-ui/react";
 import {IoArrowBack, IoChevronUp} from "react-icons/io5";
 import ResultItem from "@/components/ResultItem";
 import {Icon} from "@chakra-ui/icons";
 import {SearchContext} from "@/context/SearchProvider";
 import {LocationBreadcrumb} from "@/components/Breadcrumb/LocationBreadcrumb";
 import {locations} from "@/static/locations/locations";
+import {SlackbotContext} from "@/context/SlackbotProvider";
 
 interface props {
     selectedId?: string
@@ -18,7 +19,7 @@ interface props {
     setZoomLevel?: (level: number) => void
 }
 
-const initStyle: string = 'absolute z-20 left-0 bottom-0 h-screen w-[306px] bg-white border-r border-black/50-200'
+const initStyle: string = 'absolute z-20 left-0 bottom-0 h-screen w-[306px] bg-white border-black/50-200'
 
 const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setCenter, setZoomLevel}) => {
     const [isSearch, setIsSearch] = useState<boolean>(true)
@@ -33,6 +34,7 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
         isSearchOpen,
         setIsSearchOpen
     } = useContext(SearchContext)
+    const { isOpen, type, setSlackbotContext } = useContext(SlackbotContext)
 
     const searchStore = async () => {
         setSearchData && setSearchData('keyword', inputKeyword)
@@ -43,7 +45,7 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
         setZoomLevel && setZoomLevel(county === '전체' ? 12 : city === '전체' ? 9 : 6)
     }
 
-    return <div className={`absolute z-10 left-20 top-0 h-screen w-[306px] overflow-y-auto bg-white${!isSearchOpen ? " hidden" : ""}`}>
+    return <div className={`absolute z-10 left-20 top-0 h-screen w-[316px] overflow-y-auto bg-white${!isSearchOpen ? " hidden" : ""}`}>
         <div className={`${initStyle} pt-12`}>
             <div>
                 <div className={'w-full h-[140px]'}>
@@ -210,9 +212,17 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                                     </div>
                                 </div>
                             </div>
-
                         </>
                     }
+                    <div className={'mx-[21px] mb-12'}>
+                        <p className={'font-inter text-slate-500 text-sm font-normal leading-tight'}>찾는 레코드샵이 없다면?</p>
+                        <Button className={'font-inter text-slate-500 text-sm font-bold underline leading-tight'} variant={'link'} onClick={() => {
+                                setSlackbotContext({isOpen: true, type: 'create'})
+                            }}
+                        >
+                            나만 알고있는 레코드샵 등록하기
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

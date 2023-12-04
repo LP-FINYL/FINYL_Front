@@ -1,26 +1,41 @@
 "use client"
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {NextPage} from "next";
 import Image from "next/image";
 import {ArrowBackIcon, ExternalLinkIcon, Icon} from '@chakra-ui/icons'
-import {Button, IconButton, Menu, MenuButton, MenuItem, MenuList, Skeleton, SkeletonText} from '@chakra-ui/react'
+import {
+    Button,
+    IconButton,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Skeleton,
+    SkeletonText,
+    Tag,
+    useClipboard, useToast
+} from '@chakra-ui/react'
 import {noAuthFetch} from "@/api/api";
-import {CopyModal} from "@/components/modal/CopyModal";
 import {BsGlobe2, BsInstagram} from 'react-icons/bs'
 import {useRouter} from "next/navigation";
 import {IoLogoInstagram, IoLogoTwitter} from "react-icons/io";
 import {IoChevronForward, IoHomeSharp} from "react-icons/io5";
+import {SlackbotContext} from "@/context/SlackbotProvider";
+
 
 interface props {
     selectedId?: string
     setSelectedId: (selectedId?: string) => void
 }
 
-const initStyle: string = 'absolute z-10 left-[376px] top-0 h-screen w-[393px] bg-white'
+const initStyle: string = 'relative z-10 top-0 h-screen w-[393px] bg-white border-l border-slate-200'
 
 const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
     const router = useRouter()
-    const [loading, setLoading] = useState<boolean>(true)
+    const toast = useToast()
+    const { onCopy, value, setValue, hasCopied } = useClipboard("")
+    const [loading, setLoading] = useState<boolean>(false)
+    const { isOpen, type, updateId, setSlackbotContext } = useContext(SlackbotContext)
     const [
         {
             title,
@@ -39,22 +54,40 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
             getStoreInfo(selectedId)
         }else{
             setCardData({
-                title: ''
+                title: '방레코드'
             })
             setLoading(true)
         }
     }, [selectedId])
 
+    useEffect(() => {
+        if(value){
+            onCopy()
+        }
+    }, [value]);
+
     const getStoreInfo = async (id: string) => {
         const result = await noAuthFetch(`storeInfo?id=${id}`, 'GET')
 
-        setCardData({
-            ...result,
-            operatorTime: JSON.parse(result.operatorTime),
-            phone: result.phone ? `0${result.phone}` : '-'
-        })
+        if(result){
+            setCardData({
+                ...result,
+                operatorTime: JSON.parse(result.operatorTime),
+                phone: result.phone ? `0${result.phone}` : '-'
+            })
 
-        setLoading(false)
+            setLoading(false)
+        }
+    }
+
+    const copyText = (value: string) => {
+        setValue(value)
+
+        toast({
+            title: "복사되었습니다.",
+            duration: 2000,
+            status: 'success'
+        })
     }
 
     const goToUrl = (url: string) => {
@@ -94,7 +127,7 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
             <div></div>
         }
     }
-
+    //  ${!selectedId ? 'hidden' : ''}
     return <div className={`${initStyle} ${!selectedId ? 'hidden' : ''}`}>
         <div className={'flex flex-col w-full h-full rounded-t-[10px]'}>
             <div className={'flex justify-between w-full h-12 px-[21px] py-3'}>
@@ -117,12 +150,8 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
             <div className={'flex flex-col p-6'}>
                 <div className={'flex justify-between'}>
                     <div>
-                        <SkeletonText noOfLines={1} isLoaded={!loading}>
-                            <p className={"font-inter text-slate-600 text-sm font-normal leading-tight"}>{tags ?? ''}</p>
-                        </SkeletonText>
-                        <SkeletonText mt={2} noOfLines={1} isLoaded={!loading}>
-                            <p className={"font-inter text-xl font-bold text-gray-900 leading-normal"}>{title ?? ''}</p>
-                        </SkeletonText>
+                        <p className={"font-inter text-slate-600 text-sm font-normal leading-tight"}>{tags ?? '중고 바이닐'}</p>
+                        <p className={"font-inter text-xl font-bold text-gray-900 leading-normal"}>{title ?? '방레코드'}</p>
                     </div>
                     <div className={'flex gap-[9px]'}>
                         {
@@ -154,14 +183,41 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                         {/*/>*/}
                     </div>
                 </div>
-                <SkeletonText my={2} noOfLines={1} isLoaded={!loading}>
-                <p className={"font-inter text-slate-600 text-sm font-normal my-[18px]"}>{address ?? ''}</p>
-                </SkeletonText>
-                <div className={'flex'}>
-                    <CopyModal text={'주소 복사'} copyValue={address ?? ''}/>
-                    <CopyModal text={'전화번호 복사'} copyValue={phone ?? ''}/>
+                <div className={'flex flex-col mt-[36px]'}>
+                    <p className={'font-inter text-slate-500 text-sm font-normal leading-tight'}>
+                        주소
+                    </p>
+                    <div className={'flex'}>
+                        <p className={'font-inter text-gray-900 text-sm font-normal leading-[21px]'}>{address ?? '서울 마포구 토정로 16길 20 1층 제2호'}</p>
+                        <Tag size={'sm'} className={'cursor-pointer ml-[9px]'} onClick={() => copyText(address ?? '서울 마포구 토정로 16길 20 1층 제2호')}>
+                            복사
+                        </Tag>
+                    </div>
+
+                    <p className={'font-inter text-slate-500 text-sm font-normal leading-tight mt-3'}>
+                        전화번호
+                    </p>
+                    <div className={'flex'}>
+                        <p className={'font-inter text-gray-900 text-sm font-normal leading-[21px]'}>{phone ?? '010-1234-5678'}</p>
+                        <Tag size={'sm'} className={'cursor-pointer ml-[9px]'} onClick={() => copyText(phone ?? '010-1234-5678')}>
+                            복사
+                        </Tag>
+                    </div>
                 </div>
-                <div className={'border-t-[1px] my-4 border-t-line'}/>
+                <div className={'border-t-[1px] my-[18px] border-t-line'}/>
+                <div
+                    className={'flex justify-between cursor-pointer items-center'}
+                    onClick={() => {
+                        window.open(`https://search.naver.com/search.naver?where=view&sm=tab_jum&query=lp ${title}`)
+                    }}
+                >
+                    <div>
+                        <p className={'font-inter text-gray-900 text-base font-bold leading-tight'}>레코드샵 리뷰</p>
+                        <p className={'font-inter text-slate-500 text-xs font-normal leading-none'}>네이버 블로그의 후기 모음으로 이동합니다</p>
+                    </div>
+                    <Icon as={IoChevronForward} color={'gray.400'}/>
+                </div>
+                <div className={'border-t-[1px] my-[18px] border-t-line'}/>
                 <div className={'flex justify-between'}>
                     <div className={'w-[160px] flex flex-col'}>
                         <p className={'font-inter text-slate-600 text-sm font-normal leading-tight'}>
@@ -197,17 +253,23 @@ const FinylMainCard: NextPage<props> = ({selectedId, setSelectedId}) => {
                         </SkeletonText>
                     </div>
                 </div>
-                <div
-                    className={'flex justify-between mt-9 cursor-pointer items-center'}
-                    onClick={() => {
-                        window.open(`https://search.naver.com/search.naver?where=view&sm=tab_jum&query=lp ${title}`)
-                    }}
-                >
-                    <div>
-                        <p className={'font-inter text-gray-900 text-base font-bold leading-tight'}>레코드샵 리뷰</p>
-                        <p className={'font-inter text-slate-500 text-xs font-normal leading-none'}>네이버 블로그의 후기 모음으로 이동합니다</p>
-                    </div>
-                    <Icon as={IoChevronForward} color={'gray.400'}/>
+                <div className={'border-t-[1px] my-[18px] border-t-line'}/>
+                <div className={'flex flex-col'}>
+                    <p className={'font-inter text-slate-500 text-sm font-normal leading-tight'}>레코드샵 정보 수정이 필요하다면?</p>
+                    <Button
+                        className={'font-inter text-slate-500 text-sm font-bold underline leading-tight justify-start'}
+                        variant={'link'}
+                        onClick={() => setSlackbotContext({isOpen: true, type: "update", updateId: selectedId})}
+                    >
+                        정보 수정 제안하기
+                    </Button>
+                    <Button
+                        className={'font-inter text-slate-500 text-sm font-bold underline leading-tight justify-start'}
+                        variant={'link'}
+                        onClick={() => setSlackbotContext({isOpen: true, type: "delete", updateId: selectedId})}
+                    >
+                        레코드샵 삭제 요청하기
+                    </Button>
                 </div>
             </div>
         </div>

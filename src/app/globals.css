@@ -22,3 +22,7 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+p {
+    font-family: Inter, serif;
+}

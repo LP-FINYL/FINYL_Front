@@ -6,6 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react'
 import {NextUIProvider} from "@nextui-org/react";
 import {SearchProvider} from "@/context/SearchProvider";
 import {createElement} from "react";
+import {SlackbotProvider} from "@/context/SlackbotProvider";
 
 const AppProvider = ({ contexts , children }: any) => contexts.reduce(
     // eslint-disable-next-line react/no-children-prop
@@ -22,7 +23,7 @@ export function Providers({
 }) {
 
     return (
-        <AppProvider contexts={[SearchProvider]}>
+        <AppProvider contexts={[SearchProvider, SlackbotProvider]}>
             <NextUIProvider>
                 <CacheProvider>
                     <ChakraProvider>

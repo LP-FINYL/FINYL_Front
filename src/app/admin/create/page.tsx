@@ -25,21 +25,6 @@ interface OTType {
     time?: string
 }
 
-interface cardType {
-    id?: string
-    title: string
-    image?: string
-    address?: string
-    site?: string
-    instaUrl?: string
-    phone?: string
-    tags?: string
-    info?: string
-    latitude?: number
-    longitude?: number
-    operatorTime?: Array<OTType>
-}
-
 const tagsItems = ['신품 바이닐', '중고 바이닐', 'LP 바']
 
 const Home = () => {
