@@ -122,7 +122,7 @@ const Home: NextPage<props> = ({params}) => {
             <div className="w-full h-screen p-6">
                 <div className={'flex justify-start py-6'}>
                     <p className={'font-inter font-bold text-2xl'}>
-                        STORE 수정
+                        STORE 수정111
                     </p>
                 </div>
                 <Spacer y={4} />
