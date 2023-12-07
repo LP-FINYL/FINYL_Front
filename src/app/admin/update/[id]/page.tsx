@@ -84,7 +84,6 @@ const Home: NextPage<props> = ({params}) => {
             operatorTime: JSON.stringify(operatorTime)
         })
 
-        console.log('result', result)
         router.back()
     }
 
@@ -275,7 +274,7 @@ const Home: NextPage<props> = ({params}) => {
                     </TableHeader>
                     <TableBody>
                         {
-                            operatorTime.map((item) => {
+                            operatorTime.map((item, index) => {
                                 return <TableRow key={item.day}>
                                     <TableCell className={'w-[50%]'}>{item.day}</TableCell>
                                     <TableCell className={'w-[50%]'}>{item.time}</TableCell>
@@ -284,9 +283,10 @@ const Home: NextPage<props> = ({params}) => {
                                             color="danger"
                                             onClick={() => {
                                                 if(operatorTime.length <= 1) {
-                                                    setOperatorTime([{day: ''}])
+                                                    setOperatorTime([])
                                                 }else {
                                                     let tmpList = [...operatorTime]
+                                                    tmpList.splice(index, 1)
                                                     setOperatorTime([...tmpList])
                                                 }
                                             }}
