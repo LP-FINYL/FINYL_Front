@@ -250,19 +250,19 @@ const FinylStoreInfoInputCard: NextPage<props> = ({}) => {
                             onChange={(e) => setInsertDataKey('phone', e.target.value)}
                         />
                     </CreateItems>
-                    <CreateItems title={'운영시간'} description={'요일별 매장 운영시간을 입력해주세요'}>
-                        {renderOperatorTimeInputs()}
-                        <p className={'font-inter font-normal text-sm text-slate-500 leading-tight'}>
-                            기타 정보를 입력해주세요 <br/>
-                            (연중무휴, 명절 정보 등)
-                        </p>
-                        <Input
-                            size={'md'}
-                            placeholder={'정보를 입력해주세요'}
-                            value={slackbotData?.operatorTime ? slackbotData.operatorTime[7].day : ''}
-                            onChange={(e) => setOperatorTime(7, e.target.value)}
-                        />
-                    </CreateItems>
+                    {/*<CreateItems title={'운영시간'} description={'요일별 매장 운영시간을 입력해주세요'}>*/}
+                    {/*    {renderOperatorTimeInputs()}*/}
+                    {/*    <p className={'font-inter font-normal text-sm text-slate-500 leading-tight'}>*/}
+                    {/*        기타 정보를 입력해주세요 <br/>*/}
+                    {/*        (연중무휴, 명절 정보 등)*/}
+                    {/*    </p>*/}
+                    {/*    <Input*/}
+                    {/*        size={'md'}*/}
+                    {/*        placeholder={'정보를 입력해주세요'}*/}
+                    {/*        value={slackbotData?.operatorTime ? slackbotData.operatorTime[7].day : ''}*/}
+                    {/*        onChange={(e) => setOperatorTime(7, e.target.value)}*/}
+                    {/*    />*/}
+                    {/*</CreateItems>*/}
                     <CreateItems title={'태그'} description={'레코드샵 유형에 해당하는 태그를 선택해주세요'}>
                         <div className={'flex gap-2'}>
                             {renderTag(0, '신품 바이닐')}
