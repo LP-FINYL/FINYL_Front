@@ -6,6 +6,7 @@ import SideTab from "@/components/sideTab/SideTab";
 import FinylSearchResultCard from "@/components/cards/FinylSearchResultCard";
 import FinylLocationDirectionsCard from "@/components/cards/FinylLocationDirectionsCard";
 import FinylStoreInfoInputCard from "@/components/cards/FinylStoreInfoInputCard";
+import {ReviewPopover} from "@/components/Popover/ReviewPopover";
 
 const Home = () => {
     const [searchList, setSearchList] = useState<Array<storeInfoType>>([])
@@ -47,7 +48,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            <div className={'h-full ml-[376px]'}>
+            <div className={'relative h-full ml-[376px] '}>
                 <MapView
                     storeList={isSearchCard ? searchList : directionList}
                     selectedId={selectId}
@@ -59,6 +60,7 @@ const Home = () => {
                 />
             </div>
         </div>
+          <ReviewPopover />
       </div>
     )
 }

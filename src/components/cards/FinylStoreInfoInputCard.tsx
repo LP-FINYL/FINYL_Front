@@ -26,6 +26,7 @@ import DaumPost from "@/components/searchAddress/DaumPost";
 import {SlackbotContext} from "@/context/SlackbotProvider";
 import {CreateItems} from "@/components/cards/CreateItems";
 import {UpdateItems} from "@/components/cards/UpdateItems";
+import {TagView} from "@/components/tag/TagView";
 
 interface slackCardType extends cardType {
     deleteReason?: string
@@ -83,7 +84,7 @@ const FinylStoreInfoInputCard: NextPage<props> = ({}) => {
     }
 
     const postSlackbot = async () => {
-        const result = await slackFetch(type,"POST", {
+        const result = await slackFetch(`approval/${type}`,"POST", {
             ...slackbotData,
             operatorTime: JSON.stringify(slackbotData.operatorTime),
             tags: tagArray.filter(v => v).join(', ')
@@ -263,8 +264,14 @@ const FinylStoreInfoInputCard: NextPage<props> = ({}) => {
                     {/*        onChange={(e) => setOperatorTime(7, e.target.value)}*/}
                     {/*    />*/}
                     {/*</CreateItems>*/}
-                    <CreateItems title={'태그'} description={'레코드샵 유형에 해당하는 태그를 선택해주세요'}>
-                        <div className={'flex gap-2'}>
+                    {/*<CreateItems title={'태그'} description={'레코드샵 유형에 해당하는 태그를 선택해주세요'}>*/}
+                    {/*    <TagView initItems={['중고 바이닐', '신품 바이닐', 'LP 바']} item={tagArray} setItem={() => {}} />*/}
+                    {/*</CreateItems>*/}
+                    <CreateItems
+                        title={'태그'}
+                        description={'레코드샵 유형에 해당하는 태그를 선택해주세요'}
+                    >
+                        <div>
                             {renderTag(0, '신품 바이닐')}
                             {renderTag(1, '중고 바이닐')}
                             {renderTag(2, 'LP 바')}
