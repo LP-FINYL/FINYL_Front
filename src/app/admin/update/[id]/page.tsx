@@ -20,6 +20,8 @@ import {NextPage} from "next";
 import Image from "next/image";
 import {Skeleton} from "@chakra-ui/react";
 import {checkToken} from "@/components/Functions/useFunctions";
+import {TagView} from "@/components/tag/TagView";
+import {STORE_TAG_LIST} from "@/static/lib";
 
 interface OTType {
     day: string
@@ -56,6 +58,7 @@ const Home: NextPage<props> = ({params}) => {
     })
     const [operatorTime, setOperatorTime] = useState<Array<OTType>>([])
     const [inputOTData, setInputOTData] = useState<OTType>({day: '', time: ''})
+    const [tagAllowList, setTagAllowList] = useState<Array<string | undefined>>([])
 
     useEffect(() => {
         if(!checkToken()) return router.replace('/admin')
@@ -74,14 +77,27 @@ const Home: NextPage<props> = ({params}) => {
         const result = await noAuthFetch(`storeInfo?id=${id}`, 'GET')
 
         let otData: any = JSON.parse(result.operatorTime)
+        let tagList = result.tags
+
+        let tags = STORE_TAG_LIST.map(v => {
+            let status = tagList.findIndex((tag: string) => v === tag)
+            if(status === -1){
+                return undefined
+            } else {
+                return v
+            }
+        })
+
         setInsertData(result)
         setOperatorTime([...otData])
+        setTagAllowList([...tags])
     }
 
     const postAdminCreate = async () => {
         const result = await adminFetch('adminUpdate', "POST", {
             ...insertData,
-            operatorTime: JSON.stringify(operatorTime)
+            operatorTime: JSON.stringify(operatorTime),
+            tags: tagAllowList.filter(v => v)
         })
 
         router.back()
@@ -122,7 +138,7 @@ const Home: NextPage<props> = ({params}) => {
             <div className="w-full h-screen p-6">
                 <div className={'flex justify-start py-6'}>
                     <p className={'font-inter font-bold text-2xl'}>
-                        STORE 수정111
+                        STORE 수정
                     </p>
                 </div>
                 <Spacer y={4} />
@@ -181,15 +197,14 @@ const Home: NextPage<props> = ({params}) => {
                     />
                 </div>
                 <Spacer y={4} />
-                <Input
-                    label={'태그'}
-                    labelPlacement={'outside'}
-                    placeholder={'태그를 입력해주세요.'}
-                    value={insertData.tags}
-                    onChange={(v) => {
-                        setInsertDataKey('tags', v.target.value)
-                    }}
-                />
+                <div>
+                    <p className={'font-inter font-normal text-sm'}>
+                        태그
+                    </p>
+                    <TagView item={tagAllowList} setItem={item => {
+                        setTagAllowList(item)
+                    }} initItems={STORE_TAG_LIST}/>
+                </div>
                 <Spacer y={4} />
                 <Input
                     label={'사이트'}
