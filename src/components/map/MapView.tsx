@@ -73,6 +73,7 @@ const MapView:NextPage<props> = ({selectedId, setSelectedId, setCurrentLocation,
 
                         if(!isSearchNow) {
                             setCoords && setCoords({
+                                ...coords,
                                 SWlat: sw.getLat(),
                                 SWlng: sw.getLng(),
                                 NElat: ne.getLat(),

@@ -1,6 +1,7 @@
 import {NextPage} from "next";
 import {Tag, TagCloseButton} from "@chakra-ui/react";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import {isArray} from "@chakra-ui/utils";
 
 interface itemType {
     key: string
@@ -8,32 +9,68 @@ interface itemType {
 }
 
 interface IProps {
-    gap?: number
+    gap?: number | string
     initItems: Array<string>
-    item: Array<string>
-    setItem: (item: string | undefined) => void
+    item: Array<string | undefined>
+    setItem: (item: Array<string | undefined>) => void
 }
-const TagView:NextPage<IProps> = ({gap, initItems = [], item}) => {
-    const [selectTags, setSelectTags] = useState<Array<string>>([])
+const TagView:NextPage<IProps> = ({gap, initItems = [], item, setItem}) => {
+    const [selectTags, setSelectTags] = useState<Array<string | undefined>>([])
 
-    return <div className={`flex flex-col gap-[${gap ?? 18}px]`}>
-        {
-            selectTags.length
-                ? selectTags.map(tag => <Tag key={tag} size={'md'}>
-                    {tag}
-                        <TagCloseButton />
-                    </Tag>)
-                : <Tag size={'md'}>
-                    전체
-                    <TagCloseButton />
-                </Tag>
+    useEffect(() => {
+        if(!isArray(item)){
+            setSelectTags([item])
+        }else{
+            setSelectTags(item)
         }
-        <div>
+    }, [item]);
 
+    const SelectTag = () => {
+        const itemState = item.findIndex(v => v !== undefined)
+        const itemAllState = item.findIndex(v => v === undefined)
+
+        if(itemState === -1 || itemAllState === -1){
+            return <Tag size={'md'}>
+                전체
+                <TagCloseButton />
+            </Tag>
+        }
+
+        return initItems.map((tag, index) => {
+            return tag === item[index] ? <Tag key={tag} size={'md'}>
+                {tag}
+                <TagCloseButton onClick={() => {
+                    let tmpItems = item
+                    tmpItems[index] = undefined
+                    setItem([...tmpItems])
+                }}/>
+            </Tag> : <></>
+        })
+    }
+
+    return <div className={`flex flex-col gap-${gap ?? '[18px]'}`}>
+        <div className={'flex gap-[3px] flex-wrap'}>
+            <SelectTag />
         </div>
-        <div className={'flex gap-[3px] '}>
+        <div className={'flex gap-[3px]'}>
             {
-                initItems.filter((v, index) => v !== item[index]).map(v => <Tag key={v}>{v}</Tag>)
+                initItems.map((v, index) => {
+                    return v !== item[index] ? <Tag
+                        key={v}
+                        className={'cursor-pointer'}
+                        onClick={() => {
+                            let tmpItems = item
+                            tmpItems[index] = v
+                            if(tmpItems.findIndex(v => v === undefined) === -1) {
+                                setItem(new Array(initItems.length).fill(undefined))
+                            }else {
+                                setItem([...tmpItems])
+                            }
+                        }}
+                    >
+                        {v}
+                    </Tag> : <></>
+                })
             }
         </div>
     </div>

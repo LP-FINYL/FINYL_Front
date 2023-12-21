@@ -1,0 +1,1 @@
+export const STORE_TAG_LIST: Array<string> = ['신품 바이닐', '중고 바이닐', 'LP 바']

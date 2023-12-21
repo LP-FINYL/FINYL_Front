@@ -10,6 +10,8 @@ import {SearchContext} from "@/context/SearchProvider";
 import {LocationBreadcrumb} from "@/components/Breadcrumb/LocationBreadcrumb";
 import {locations} from "@/static/locations/locations";
 import {SlackbotContext} from "@/context/SlackbotProvider";
+import {STORE_TAG_LIST} from "@/static/lib";
+import {TagView} from "@/components/tag/TagView";
 
 interface props {
     selectedId?: string
@@ -27,6 +29,7 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
     const [city, setCity] = useState('마포구')
     const [searchLocationIndex, setSearchLocationIndex] = useState<number | undefined>(undefined)
     const [inputKeyword, setInputKeyword] = useState<string>("")
+    const [tagList, setTagList] = useState<Array<string | undefined>>(new Array(STORE_TAG_LIST.length).fill(undefined))
     const {
         keyword,
         setSearchData,
@@ -44,6 +47,15 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
         setCenter && setCenter(locations[county][city])
         setZoomLevel && setZoomLevel(county === '전체' ? 12 : city === '전체' ? 9 : 6)
     }
+
+    useEffect(() => {
+        const tags = tagList.filter(v => v)
+        if(tags.length){
+            setSearchData && setSearchData('tags', tags.join(','))
+        }else{
+            setSearchData && setSearchData('tags')
+        }
+    }, [tagList]);
 
     return <div className={`absolute z-10 left-20 top-0 h-screen w-[316px] overflow-y-auto bg-white${!isSearchOpen ? " hidden" : ""}`}>
         <div className={`${initStyle} pt-12`}>
@@ -150,6 +162,8 @@ const FinylSearchResultCard: NextPage<props> = ({selectedId, setSelectedId, setC
                     </div>
                     <div className={'mx-[21px] border-t border-gray-200 pb-[18px]'} />
                     <div className={'px-[21px]'}>
+                        <TagView gap={3} item={tagList} setItem={setTagList} initItems={STORE_TAG_LIST} />
+                        <div className={'mt-[18px]'}/>
                         <SearchBox
                             keyword={inputKeyword}
                             setKeyword={setInputKeyword}

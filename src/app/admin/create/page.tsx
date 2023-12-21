@@ -19,6 +19,8 @@ import {useRouter} from "next/navigation"
 import Image from "next/image";
 import {checkToken} from "@/components/Functions/useFunctions";
 import {Tag} from "@chakra-ui/react";
+import {TagView} from "@/components/tag/TagView";
+import {STORE_TAG_LIST} from "@/static/lib";
 
 interface OTType {
     day: string
@@ -35,7 +37,7 @@ const Home = () => {
     })
     const [operatorTime, setOperatorTime] = useState<Array<OTType>>([])
     const [inputOTData, setInputOTData] = useState<OTType>({day: '', time: ''})
-    const [tagAllowList, setTagAllowList] = useState<Array<boolean>>([false, false, false])
+    const [tagAllowList, setTagAllowList] = useState<Array<string>>([])
 
     useEffect(() => {
         if(!checkToken()){
@@ -53,7 +55,7 @@ const Home = () => {
     const postAdminCreate = async () => {
         const result = await adminFetch('adminCreate', "POST", {
             ...insertData,
-            tags: changeTagsListToString(tagAllowList),
+            // tags: changeTagsListToString(tagAllowList),
             operatorTime: JSON.stringify(operatorTime)
         })
 
@@ -171,35 +173,36 @@ const Home = () => {
                     <p className={'font-inter font-normal text-sm'}>
                         태그
                     </p>
-                    <div className={'flex gap-3 mt-3'}>
-                        <Tag
-                            size={'lg'}
-                            className={`cursor-pointer ${tagAllowList[0] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}
-                            onClick={() => {
-                                setTagAllowList([...changeBooleanValue(tagAllowList, 0)])
-                            }}
-                        >
-                            신품 바이닐
-                        </Tag>
-                        <Tag
-                            size={'lg'}
-                            className={`cursor-pointer ${tagAllowList[1] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}
-                            onClick={() => {
-                                setTagAllowList([...changeBooleanValue(tagAllowList, 1)])
-                            }}
-                        >
-                            중고 바이닐
-                        </Tag>
-                        <Tag
-                            size={'lg'}
-                            className={`cursor-pointer ${tagAllowList[2] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}
-                            onClick={() => {
-                                setTagAllowList([...changeBooleanValue(tagAllowList, 2)])
-                            }}
-                        >
-                            LP 바
-                        </Tag>
-                    </div>
+                    <TagView item={tagAllowList} setItem={item => setTagAllowList(item)} initItems={STORE_TAG_LIST}/>
+                    {/*<div className={'flex gap-3 mt-3'}>*/}
+                    {/*    <Tag*/}
+                    {/*        size={'lg'}*/}
+                    {/*        className={`cursor-pointer ${tagAllowList[0] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}*/}
+                    {/*        onClick={() => {*/}
+                    {/*            setTagAllowList([...changeBooleanValue(tagAllowList, 0)])*/}
+                    {/*        }}*/}
+                    {/*    >*/}
+                    {/*        신품 바이닐*/}
+                    {/*    </Tag>*/}
+                    {/*    <Tag*/}
+                    {/*        size={'lg'}*/}
+                    {/*        className={`cursor-pointer ${tagAllowList[1] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}*/}
+                    {/*        onClick={() => {*/}
+                    {/*            setTagAllowList([...changeBooleanValue(tagAllowList, 1)])*/}
+                    {/*        }}*/}
+                    {/*    >*/}
+                    {/*        중고 바이닐*/}
+                    {/*    </Tag>*/}
+                    {/*    <Tag*/}
+                    {/*        size={'lg'}*/}
+                    {/*        className={`cursor-pointer ${tagAllowList[2] ? 'bg-gray-200 hover:bg-slate-200' : 'bg-emerald-400 hover:bg-emerald-200'}`}*/}
+                    {/*        onClick={() => {*/}
+                    {/*            setTagAllowList([...changeBooleanValue(tagAllowList, 2)])*/}
+                    {/*        }}*/}
+                    {/*    >*/}
+                    {/*        LP 바*/}
+                    {/*    </Tag>*/}
+                    {/*</div>*/}
                 </div>
                 <Spacer y={4} />
                 <Input

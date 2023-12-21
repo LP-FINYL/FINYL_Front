@@ -16,6 +16,7 @@ interface CoordsType {
     SWlng?: number
     NElat?: number
     NElng?: number
+    tags?: string
 }
 
 interface IGlobalContext extends SearchQueryType {
@@ -96,8 +97,8 @@ const SearchProvider: NextPage<IProps> = ({children}) => {
         setSearchList([...result])
     }
 
-    const getCoordsLocation = async ({SWlat, SWlng, NElat, NElng}: CoordsType) => {
-        const result = await noAuthFetch(`locationDirections?SWlatitude=${SWlat}&SWlongitude=${SWlng}&NElatitude=${NElat}&NElongitude=${NElng}`, 'GET')
+    const getCoordsLocation = async ({SWlat, SWlng, NElat, NElng, tags}: CoordsType) => {
+        const result = await noAuthFetch(`locationDirections?SWlatitude=${SWlat}&SWlongitude=${SWlng}&NElatitude=${NElat}&NElongitude=${NElng}${tags ? `&tags=${tags}` : ''}`, 'GET')
 
         setSearchList(result)
     }
