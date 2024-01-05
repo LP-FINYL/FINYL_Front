@@ -35,6 +35,8 @@ interface slackCardType extends cardType {
 interface props {
 }
 
+const MonTOFri = ['월', '화', '수', '목', '금']
+
 const initStyle: string = 'relative z-10 top-0 h-screen w-[292px] bg-white py-[52px] px-[21px] border-l border-slate-200'
 
 const initData = {
@@ -142,19 +144,26 @@ const FinylStoreInfoInputCard: NextPage<props> = ({}) => {
 
     const renderOperatorTimeInputs = () => {
         const daysOfWeek = ['월', '화', '수', '목', '금', '토', '일']
-        return daysOfWeek.map((day, index) => (
-            <div key={index} className={'flex justify-between items-center'}>
-                <p className={'font-inter font-normal text-sm text-slate-500 leading-tight mr-[6px]'}>
-                    {day}
-                </p>
-                <Input
-                    size={'md'}
-                    placeholder={'정보를 입력해주세요'}
-                    value={slackbotData?.operatorTime ? slackbotData.operatorTime[index].time : ''}
-                    onChange={(e) => setOperatorTime(index, e.target.value)}
-                />
+        return <div className={'flex flex-col gap-[3px]'}>
+            {
+                daysOfWeek.map((day, index) => (
+                    <div key={index} className={'flex justify-between items-center'}>
+                        <p className={'font-inter font-normal text-sm text-slate-500 leading-tight mr-[6px]'}>
+                            {day}
+                        </p>
+                        <Input
+                            size={'md'}
+                            placeholder={'정보를 입력해주세요'}
+                            value={slackbotData?.operatorTime ? slackbotData.operatorTime[index].time : ''}
+                            onChange={(e) => setOperatorTime(index, e.target.value)}
+                        />
+                    </div>
+                ))
+            }
+            <div className={'mt-[9px]'}>
+                <Tag>모든 영업시간 수정</Tag>
             </div>
-        ))
+        </div>
     }
 
     const renderTag = (index: number, label: string) => {
@@ -251,22 +260,22 @@ const FinylStoreInfoInputCard: NextPage<props> = ({}) => {
                             onChange={(e) => setInsertDataKey('phone', e.target.value)}
                         />
                     </CreateItems>
-                    {/*<CreateItems title={'운영시간'} description={'요일별 매장 운영시간을 입력해주세요'}>*/}
-                    {/*    {renderOperatorTimeInputs()}*/}
-                    {/*    <p className={'font-inter font-normal text-sm text-slate-500 leading-tight'}>*/}
-                    {/*        기타 정보를 입력해주세요 <br/>*/}
-                    {/*        (연중무휴, 명절 정보 등)*/}
-                    {/*    </p>*/}
-                    {/*    <Input*/}
-                    {/*        size={'md'}*/}
-                    {/*        placeholder={'정보를 입력해주세요'}*/}
-                    {/*        value={slackbotData?.operatorTime ? slackbotData.operatorTime[7].day : ''}*/}
-                    {/*        onChange={(e) => setOperatorTime(7, e.target.value)}*/}
-                    {/*    />*/}
-                    {/*</CreateItems>*/}
-                    {/*<CreateItems title={'태그'} description={'레코드샵 유형에 해당하는 태그를 선택해주세요'}>*/}
-                    {/*    <TagView initItems={['중고 바이닐', '신품 바이닐', 'LP 바']} item={tagArray} setItem={() => {}} />*/}
-                    {/*</CreateItems>*/}
+                    <CreateItems title={'운영시간'} description={'요일별 매장 운영시간을 입력해주세요'}>
+                        {renderOperatorTimeInputs()}
+                        <p className={'font-inter font-normal text-sm text-slate-500 leading-tight'}>
+                            기타 정보를 입력해주세요 <br/>
+                            (연중무휴, 명절 정보 등)
+                        </p>
+                        <Input
+                            size={'md'}
+                            placeholder={'정보를 입력해주세요'}
+                            value={slackbotData?.operatorTime ? slackbotData.operatorTime[7].day : ''}
+                            onChange={(e) => setOperatorTime(7, e.target.value)}
+                        />
+                    </CreateItems>
+                    <CreateItems title={'태그'} description={'레코드샵 유형에 해당하는 태그를 선택해주세요'}>
+                        <TagView initItems={['중고 바이닐', '신품 바이닐', 'LP 바']} item={tagArray} setItem={() => {}} />
+                    </CreateItems>
                     <CreateItems
                         title={'태그'}
                         description={'레코드샵 유형에 해당하는 태그를 선택해주세요'}

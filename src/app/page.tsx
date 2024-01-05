@@ -22,7 +22,7 @@ const Home = () => {
 
     return (
       <div className="w-full flex flex-col items-center justify-center">
-        <div className="w-full h-screen">
+        <div className="w-full h-screen overflow-hidden">
             <div className={'w-20'}>
                 <SideTab />
                 <FinylLocationDirectionsCard
@@ -60,7 +60,10 @@ const Home = () => {
                 />
             </div>
         </div>
-          <ReviewPopover />
+        {/*<ReviewPopover />*/}
+          <div className={'absolute right-6 bottom-6 z-10'}>
+              <ReviewPopover />
+          </div>
       </div>
     )
 }
