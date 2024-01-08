@@ -22,7 +22,7 @@ env:
   GKE_CLUSTER: finyl-cluster    # TODO: update to cluster name
   GKE_ZONE: asia-northeast3-c  # TODO: update to cluster zone
   DEPLOYMENT_NAME: finyl-frontend # TODO: update to deployment name
-  REPOSITORY: finyl-fe # TODO: update to Artifact Registry docker repository
+  REPOSITORY: finyl-frontend # TODO: update to Artifact Registry docker repository
   IMAGE: finyl-frontend
 
 jobs:
