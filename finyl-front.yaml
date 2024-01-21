@@ -18,18 +18,11 @@ spec:
         app: finyl-frontend
     spec:
       containers:
-        - image: asia-northeast3-docker.pkg.dev/root-augury-403911/finyl-fe/finyl-frontend:latest
+        - image: asia-northeast3-docker.pkg.dev/notional-gist-410602/finyl-frontend/finyl-frontend:latest
           imagePullPolicy: Always
           name: finyl-frontend
           ports:
             - containerPort: 8080
-          resources:
-            limits:
-              cpu: 500m
-              memory: 2Gi
-            requests:
-              cpu: 500m
-              memory: 2Gi
           securityContext:
             capabilities:
               drop:
