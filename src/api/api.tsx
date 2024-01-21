@@ -1,6 +1,6 @@
 import {getCookie, setCookie} from 'cookies-next';
 
-export const FINYL_API = 'http://34.110.146.181/api/v1'
+export const FINYL_API = 'http://www.finyl.store/api/v1'
 export const SLACK_API = "http://34.36.48.60/api/v1"
 
 type noAuthFetchType<T> = (api: string, method: 'GET' | 'POST', body?: any) => Promise<T>
